@@ -1,5 +1,4 @@
 import { useState } from "react";
-import logo from "../assets/logo.svg";
 import Line from "../assets/line";
 import { searchImages } from "../lib/util.jsx";
 import { Link } from "react-router-dom";
@@ -7,7 +6,7 @@ import { useThemeStore } from "../store/useThemeStore.js";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { useUtilStore } from "../store/useUtilStore.js";
 import { useImageStore } from "../store/useImageStore.js";
-import {Menu,Sun,Moon,Search} from 'lucide-react'
+import { Menu, Sun, Moon, Search, LogOut, LogIn } from 'lucide-react'
 
 const Navbar = (props) => {
   const [searchVal, setsearchVal] = useState("");
@@ -37,72 +36,75 @@ const Navbar = (props) => {
     <div
       className={`${
         theme ? "text-gray-400" : "bg-black text-white"
-      } flex flex-wrap justify-between p-4 border-2 border-green-400 w-full`}
+      } border-2 border-green-500 w-full`}
     >
-      <div className="flex items-center gap-3">
-        <div onClick={changeDisplay} className="pt-1">
-          <Menu/>
+      <div className="flex flex-wrap justify-between p-4">
+        <div className="flex items-center gap-3">
+          <div onClick={changeDisplay} className="pt-1">
+            <Menu className="size-6 sm:size-7"/>
+          </div>
+          <Link to='/' className="text-xl sm:text-2xl lg:text-3xl flex items-center font-bold text-blue-700">
+            Freepixz
+          </Link>
         </div>
-        <div className="block">
-          <img className="max-h-8 pt-2" src={logo} alt="Error" />
+
+
+        <div className="flex flex-wrap items-center pt-1 gap-2 sm:gap-4">
+          <div className="text-sm sm:text-lg">
+            <a
+              href="#"
+              className={`hover:underline-offset-8 hover:underline ${
+              theme ? "decoration-gray-400" : "decoration-white"
+              }`}
+            >
+              Get FreePixz+
+            </a>
+          </div>
+
+          <div onClick={() => changeTheme(theme)} className="cursor-pointer">
+            {theme?<Moon/>:<Sun/>}
+          </div>
+
+          <div>
+            <Line/>
+          </div>
+
+          <div>
+            { user ? (
+              <button className="bg-blue-700 px-2 rounded-xl py-1 hover:bg-blue-600 flex justify-center items-center">
+                <LogOut className="size-4 sm:size-5"/>
+                <span className="hidden sm:inline text-white">Logout</span>
+              </button>
+            ):(
+              <Link to='/login' className="bg-blue-700 px-2 rounded-xl py-1 hover:bg-blue-600 flex justify-center items-center">
+                <LogIn className="size-4 sm:size-5" />
+                <span className="hidden sm:inline text-white">Log In</span>
+              </Link>
+            )}
+          </div>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex gap-2 border-2 border-red-600 w-[70%]">
-        <div className="flex flex-shrink flex-grow items-center bg-white rounded-md w-[65%]">
-        <Search color={theme?"grey":"black"}/>
-        <input
-          onChange={(e)=>setsearchVal(e.target.value)}
-          className="w-full p-1 rounded-md text-gray-400 outline-none"
-          value={searchVal}
-          type="search"
-          placeholder="Search Photos and Wallpapers"
-        />
+      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center justify-center gap-2 w-full px-4 pb-4">
+        <div className="flex items-center bg-white rounded-md w-full sm:w-[75%] px-2 py-1">
+          <Search color={theme ? "grey" : "black"} />
+          <input
+            onChange={(e) => setsearchVal(e.target.value)}
+            className="w-full bg-white text-gray-400 outline-none ml-2 text-sm"
+            value={searchVal}
+            type="search"
+            placeholder="Search Photos and Wallpapers"
+          />
         </div>
-        <div className="hidden lg:block">
+        <div className="w-full sm:w-auto">
           <button
-          className="bg-blue-700 px-3 rounded-xl py-1 hover:bg-blue-600" 
-          type="submit"
+            className="bg-blue-700 w-full sm:w-auto px-3 py-1 rounded-xl hover:bg-blue-600"
+            type="submit"
           >
             Search
           </button>
         </div>
-        <div className="hidden lg:block">
-              <button
-              onClick={()=>window.location.reload()}
-              className="bg-red-700 px-3 rounded-xl py-1 hover:bg-red-500" 
-              >
-                Refresh
-              </button>
-        </div>
       </form>
-
-      <div className="flex flex-wrap items-center pt-1 md:gap-6">
-        <div className="hidden md:block">
-          <a
-            href="#"
-            className={`hover:underline-offset-8 hover:underline ${
-             theme ? "decoration-gray-400" : "decoration-white"
-            }`}
-          >
-            Get FreePixz+
-          </a>
-        </div>
-
-        <div onClick={() => changeTheme(theme)} className="cursor-pointer hidden sm:block">
-          {theme?<Moon/>:<Sun/>}
-        </div>
-
-        <div className="hidden md:block">
-          <Line/>
-        </div>
-
-        <div>
-          <button className="bg-blue-700 px-3 rounded-xl py-1 hover:bg-blue-600">
-            {user?<span onClick={handleLogout}>Logout</span>:<Link to='/login'>Login</Link>}
-          </button>
-        </div>
-      </div>
     </div>
   );
 };

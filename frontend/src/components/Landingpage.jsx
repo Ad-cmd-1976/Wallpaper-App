@@ -24,7 +24,7 @@ const Landingpage = (props) => {
   return (
     <>
     <div className={`${theme ? "text-gray-400" : "bg-black text-white"} border-2 border-violet-700 h-fit px-14 pt-10`}>
-      <div className='grid grid-cols-auto gap-2'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2'>
       {imageList.map((image)=>(
         <img key={image.public_id} src={image.url} className='w-full h-full object-cover'></img>
       ))}
