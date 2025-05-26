@@ -6,9 +6,18 @@ export default {
   ],
   theme: {
     extend: {
-      gridTemplateColumns: {
-        'auto':'repeat(auto-fill,minmax(450px,1fr))'
-      }
+        gridTemplateColumns: {
+          'auto':'repeat(auto-fill,minmax(450px,1fr))'
+        },
+        animation: {
+          gradient: 'gradient 3s ease infinite',
+        },
+        keyframes: {
+          gradient: {
+            '0%, 100%': { backgroundPosition: '0% 50%' },
+            '50%': { backgroundPosition: '100% 50%' },
+          },
+      },
     },
   },
   plugins: [],

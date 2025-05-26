@@ -1,41 +1,48 @@
 import { useState } from "react";
 import Line from "../assets/line";
-import { searchImages } from "../lib/util.jsx";
 import { Link } from "react-router-dom";
+import { toast } from 'react-hot-toast';
 import { useThemeStore } from "../store/useThemeStore.js";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { useUtilStore } from "../store/useUtilStore.js";
 import { useImageStore } from "../store/useImageStore.js";
-import { Menu, Sun, Moon, Search, LogOut, LogIn } from 'lucide-react'
+import { Menu, Sun, Moon, Search, LogOut, LogIn } from 'lucide-react';
 
-const Navbar = (props) => {
+const Navbar = () => {
   const [searchVal, setsearchVal] = useState("");
-  const {user,logout}=useAuthStore();
-  const {theme,setTheme}=useThemeStore();
-  const {display,setdisplay}=useUtilStore();
-  const {setimageList,nextCursor,setnextCursor}=useImageStore();
+  const { user, logout }=useAuthStore();
+  const { theme, setTheme }=useThemeStore();
+  const { display, setdisplay }=useUtilStore();
+  const { setimageList, nextCursor, setnextCursor, searchImages}=useImageStore();
 
   const changeTheme = (theme) => {
     setTheme(!theme);
   };
+
   const changeDisplay=()=>{
     setdisplay(!display);
-  }
+  };
+
   const handleLogout=async ()=>{
     logout();
-  }
+  };
 
   const handleSubmit=async (e)=>{
     e.preventDefault();
-    const response=await searchImages(searchVal,nextCursor);
-    setimageList(response.resources);
-    setnextCursor(response.next_cursor);
+    try{
+      const response=await searchImages(searchVal,nextCursor);
+      setimageList(response.resources);
+      setnextCursor(response.next_cursor);
+    }
+    catch(error){
+      toast.error(error.response.data.message || "Failed to load images!");
+    }
   }
   
   return (
     <div
       className={`${
-        theme ? "text-gray-400" : "bg-black text-white"
+        theme ? "text-gray-300" : "bg-black text-white"
       } border-2 border-green-500 w-full`}
     >
       <div className="flex flex-wrap justify-between p-4">
@@ -51,14 +58,12 @@ const Navbar = (props) => {
 
         <div className="flex flex-wrap items-center pt-1 gap-2 sm:gap-4">
           <div className="text-sm sm:text-lg">
-            <a
-              href="#"
-              className={`hover:underline-offset-8 hover:underline ${
-              theme ? "decoration-gray-400" : "decoration-white"
-              }`}
+            <Link
+              href="/plus"
+              className={`${theme ? 'decoration-gray-400' : 'decoration-white'} font-bold bg-gradient-to-r from-pink-500 via-yellow-500 to-cyan-500 bg-[length:200%_auto] animate-gradient bg-clip-text text-transparent text-md lg:text-lg`}
             >
               Get FreePixz+
-            </a>
+            </Link>
           </div>
 
           <div onClick={() => changeTheme(theme)} className="cursor-pointer">
@@ -71,14 +76,14 @@ const Navbar = (props) => {
 
           <div>
             { user ? (
-              <button className="bg-blue-700 px-2 rounded-xl py-1 hover:bg-blue-600 flex justify-center items-center">
+              <button onClick={handleLogout} className="bg-blue-700 px-2 rounded-xl py-1 hover:bg-blue-600 flex justify-center items-center">
                 <LogOut className="size-4 sm:size-5"/>
                 <span className="hidden sm:inline text-white">Logout</span>
               </button>
             ):(
-              <Link to='/login' className="bg-blue-700 px-2 rounded-xl py-1 hover:bg-blue-600 flex justify-center items-center">
+              <Link to='/login' className="bg-blue-700 px-2 rounded-xl py-1 hover:bg-blue-600 flex justify-center items-center gap-1">
                 <LogIn className="size-4 sm:size-5" />
-                <span className="hidden sm:inline text-white">Log In</span>
+                <span className="hidden sm:inline">Log In</span>
               </Link>
             )}
           </div>
@@ -86,8 +91,8 @@ const Navbar = (props) => {
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center justify-center gap-2 w-full px-4 pb-4">
-        <div className="flex items-center bg-white rounded-md w-full sm:w-[75%] px-2 py-1">
-          <Search color={theme ? "grey" : "black"} />
+        <div className={`flex items-center bg-white rounded-2xl w-full sm:w-[75%] px-2 py-1 border-2 ${theme?"border-gray-300": "border-white"}`}>
+          <Search color={theme ? "gray" : "black"} />
           <input
             onChange={(e) => setsearchVal(e.target.value)}
             className="w-full bg-white text-gray-400 outline-none ml-2 text-sm"

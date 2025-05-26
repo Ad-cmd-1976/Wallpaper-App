@@ -1,12 +1,11 @@
-import {useEffect, useState} from 'react'
+import {useEffect} from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
-import { Loader } from 'lucide-react'
+import LoadingSpinner from './components/LoadingSpinner.jsx';
 import Navbar from './components/Navbar'
 import HomePage from './pages/HomePage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import SignupPage from './pages/SignupPage.jsx'
-import RefreshHandler from './RefreshHandler'
 import Sidebar from './components/Sidebar'
 import { useAuthStore } from './store/useAuthStore.js'
 import './App.css'
@@ -18,19 +17,12 @@ function App() {
     checkAuth();
   },[checkAuth])
 
-  if(checkingAuth && !user){
-    return (
-      <div className='flex justify-center items-center h-screen'>
-        <Loader className='size-10 animate-spin'/>
-      </div>
-    )
-  }
+  if(checkingAuth && !user) return (<LoadingSpinner/>)
 
   return (
     <div>
       <Navbar/>
       <Sidebar/>
-      <RefreshHandler/>
       <Routes>
         <Route path='/' element={<HomePage/>}></Route>
         <Route path='/login' element={!user?<LoginPage/>:<Navigate to='/' />}></Route>

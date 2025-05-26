@@ -4,7 +4,7 @@ import Landingpage from '../components/Landingpage'
 const HomePage = () => {
     return (
         <>
-        <div>
+        <div className='min-h-screen'>
             <Lowerbar/>
             <Landingpage/>
         </div>

@@ -1,45 +1,43 @@
-import React, { useState } from 'react'
-import Line from '../assets/line'
-import { searchImages } from '../lib/util';
+import { useState } from 'react'
+import Line from '../assets/line';
+import { Link } from 'react-router-dom';
+import LowerButton from './LowerButton';
 import { useThemeStore } from '../store/useThemeStore';
-import { useImageStore } from '../store/useImageStore';
 
-const Lowerbar = (props) => {
+const Lowerbar = () => {
   const [scroll, setScroll] = useState(0);
   const {theme}=useThemeStore();
-  const {imageList,setimageList,nextCursor,setnextCursor}=useImageStore();
-
-  const reqImages=async (expression)=>{
-    const response=await searchImages(expression,nextCursor);
-    setimageList(response.resources);
-    setnextCursor(response.next_cursor);
-  }
+  
   return (
-    <div className={`${theme ? "text-gray-400" : "bg-black text-white"} flex p-3 gap-4 border-2 border-red-600`}>
-      <div className='flex gap-5'>
-        <div><a href="#" className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}>Photos</a></div>
-        <div><a href="#" className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}>IIIlustrations</a></div>
-        <div><a href="#" className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}>Freepixz+</a></div>
+    <div className={`${theme ? "text-gray-400" : "bg-black text-white"} flex p-3 gap-4 border-2 border-red-600 h-[5%]`}>
+      <div className='flex items-center gap-5'>
+        <Link to='/plus' 
+        className={`${theme ? 'decoration-gray-400' : 'decoration-white'} font-bold bg-gradient-to-r from-pink-500 via-yellow-500 to-cyan-500 bg-[length:200%_auto] animate-gradient bg-clip-text text-transparent text-md lg:text-lg`}
+        >
+        Freepixz+
+        </Link>
+        <Link to='/' className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}>Home</Link>
       </div>
 
       <div>
         <Line/>
       </div>
 
-      <div className="flex gap-9 justify-between overflow-x-auto scrollbar-hide">
-        <button onClick={()=>reqImages('Anime')} className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}>Anime</button>
-        <button  className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}>Nature</button>
-        <button  className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'} min-w-fit`}>3D Renders</button>
-        <button  className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}>Film</button>
-        <button  className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}>Experimental</button>
-        <button  className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}>Travel</button>
-        <button  className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}>Fashion</button>
-        <button  className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}>Beauty</button>
-        <button  className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}>Archival</button>
-        <button  className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}>Animals</button>
-        <button  className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}>Spirituality</button>
-        <button  className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}>Sports</button>
-        <button  className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'} min-w-fit`}>AI Generated</button>
+      <div className="flex gap-9 justify-between items-center overflow-x-auto scrollbar-hide">
+        <LowerButton content="Anime"/>
+        <LowerButton content="Nature"/>
+        <LowerButton content="3D Renders"/>
+        <LowerButton content="Film"/>
+        <LowerButton content="Experimental"/>
+        <LowerButton content="Travel"/>
+        <LowerButton content="Fashion"/>
+        <LowerButton content="Beauty"/>
+        <LowerButton content="Archival"/>
+        <LowerButton content="Animals"/>
+        <LowerButton content="Spirituality"/>
+        <LowerButton content="Sports"/>
+        <LowerButton content="Sports"/>
+        <LowerButton content="AI Generated"/>
       </div>
     </div>
   )
