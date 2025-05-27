@@ -21,11 +21,11 @@ const Landingpage = () => {
 
   const handleloadbutton=async ()=>{
     if(!user){ 
-      console.log("user not present");
       return toast.error("Login to load more images!");
     } 
     try{
       const response=await getImages(nextCursor);
+      console.log(response.data);
       setimageList([...imageList,...response.resources]);
       setnextCursor(response.next_cursor);
     }

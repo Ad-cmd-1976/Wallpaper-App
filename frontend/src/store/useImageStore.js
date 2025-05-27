@@ -1,7 +1,7 @@
 import {create} from 'zustand';
 import { toast } from 'react-hot-toast';
+import axios from '../lib/axios.js';
 
-const API_URL=import.meta.env.VITE_URL;
 
 export const useImageStore=create((set)=>({
     imageList:[],
@@ -17,9 +17,8 @@ export const useImageStore=create((set)=>({
             if(next_cursor){
                 params.append('next_cursor',next_cursor);
             }
-            const response=await fetch(`${API_URL}/photos?${params}`);
-            const result=response.json();
-            return result;
+            const response=await axios.get('/images/getImages', { params:params });
+            return response.data;
         }
         catch(error){
             toast.error(error.response?.data?.message || "Failed to fetch images!");
@@ -29,18 +28,22 @@ export const useImageStore=create((set)=>({
         }
     },
 
-    searchImages:async (searchVal,nextCursor)=>{
-        const params=new URLSearchParams();
-        params.append('expression',searchVal);
-        if(nextCursor){
-            params.append('next_cursor',nextCursor)
-        }
+    searchImages:async (searchVal)=>{
+        set({ isLoading:true });
         try{
-            const response=await fetch(`${API_URL}/search?${params}`);
-            const result=await response.json();
-            return result;
-        }catch(error){
+            const params=new URLSearchParams();
+            params.append('expression',searchVal);
+            // if(nextCursor){
+            //     params.append('next_cursor',nextCursor)
+            // }
+            const response=await axios.get('/images/search',{ params:params });
+            return response.data;
+        }
+        catch(error){
             toast.error(error.response.data.message || "Failed to fetch images!");
+        }
+        finally{
+            set({ isLoading:false });
         }
     },
 }))

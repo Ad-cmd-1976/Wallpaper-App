@@ -30,9 +30,10 @@ const Navbar = () => {
   const handleSubmit=async (e)=>{
     e.preventDefault();
     try{
-      const response=await searchImages(searchVal,nextCursor);
+      const response=await searchImages(searchVal);
       setimageList(response.resources);
       setnextCursor(response.next_cursor);
+      console.log(nextCursor);
     }
     catch(error){
       toast.error(error.response.data.message || "Failed to load images!");
