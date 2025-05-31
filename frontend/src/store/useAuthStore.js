@@ -4,28 +4,31 @@ import axios from '../lib/axios.js'
 
 export const useAuthStore=create((set,get)=>({
     user:null,
-    isLoading:false,
+    isloading:false,
     checkingAuth:false,
 
     signup:async({ name, email, password, confirmPassword})=>{
-        set({ isLoading:true });
+        set({ isloading:true });
 
         if(password != confirmPassword){
-            set({ isLoading:false });
+            set({ isloading:false });
             return toast.error("Password not matched!");
         }
         try{
             const res=await axios.post('/auth/signup',{ name, email, password });
-            set({ user:res.data, isLoading:false });
+            set({ user:res.data });
             toast.success("Signup Successfull!");
         }
         catch(error){
             toast.error(error.response?.data?.message || "Failed to signup");
         }
+        finally{
+            set({ isloading:false });
+        }
     },
 
     login:async ({ email, password })=>{
-        set({ isLoading:true });
+        set({ isloading:true });
         try{
             const res=await axios.post('/auth/login',{email:email,password:password});
             set({ user:res.data });
@@ -35,7 +38,7 @@ export const useAuthStore=create((set,get)=>({
             toast.error(error.response.data.message || "Failed to login");
         }
         finally{
-            set({ isLoding:false });
+            set({ isloading:false });
         }
     },
 

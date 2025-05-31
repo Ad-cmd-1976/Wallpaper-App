@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { toast } from 'react-hot-toast'
+import { Link } from 'react-router-dom';
+import { Lock, User, Mail, Loader } from 'lucide-react';
 import {useThemeStore} from '../store/useThemeStore.js'
 import { useAuthStore } from '../store/useAuthStore.js'
+import { motion } from 'framer-motion';
 
 const SignupPage = () => {
   const {theme}=useThemeStore();
@@ -15,96 +16,119 @@ const SignupPage = () => {
     confirmPassword:""
   })
 
-  const navigate=useNavigate();
-  const handleChange=(e)=>{
-    const {name,value}=e.target;
-    const cpysignInfo={...signInfo};
-    cpysignInfo[name]=value;
-    setsignInfo(cpysignInfo);
-  }
-
   const handleSubmit=async (e)=>{
     e.preventDefault();
     signup(signInfo);
   }
 
   return (
-    <div className={`flex flex-col gap-8 justify-center items-center min-h-screen min-w-full mx-auto  ${theme?"bg-white text-black":"bg-black text-white"}`}>
-      <h1 className='font-bold'>Sign Up</h1>
-      <form 
-      onSubmit={handleSubmit} 
-      className='flex flex-col gap-5'
-      >
-        <div>
-          <label htmlFor="name">Name</label>
-          <div>
-          <input
-            onChange={handleChange}
-            className='border-2 w-96 p-1 pl-2 rounded-md text-black'
-            type='text'
-            id='name'
-            name='name'
-            value={signInfo.name}
-          />
-          </div>
-        </div>
-        <div>
-          <label htmlFor="name">Email</label>
-          <div>
-          <input
-            onChange={handleChange}
-            className='border-2 w-96 p-1 pl-2 rounded-md text-black'
-            type='text'
-            id='email'
-            name='email'
-            value={signInfo.email}
-          />
-          </div>
-        </div>
-        <div>
-          <label htmlFor="name">Password</label>
-          <div>
-          <input
-            onChange={handleChange}
-            className='border-2 w-96 p-1 pl-2 rounded-md text-black'
-            type='password'
-            id='password'
-            name='password'
-            value={signInfo.password}
-          />
-          </div>
-        </div>
+    <div 
+    className={`flex justify-center border-2 border-yellow-300 gap-8 pt-7 sm:pt-11 min-h-screen min-w-full mx-auto ${theme?"bg-white text-gray-400":"bg-black text-white"} `}
+    >
+      <div className='border-2 border-red-500 flex gap-10 flex-col items-center w-full'>
+        <div className='flex flex-col gap-4 justify-center items-center w-full'>
+          <motion.p
+          initial={{opacity:0,y:-20}}
+          animate={{opacity:1,y:0}}
+          transition={{duration:0.5,delay:0.25}} 
+          className='text-xl font-bold'
+          >Sign Up</motion.p>
+          <motion.form 
+          initial={{opacity:0,y:20}}
+          animate={{opacity:1,y:0}}
+          transition={{duration:0.5,delay:0.25}}
+          onSubmit={handleSubmit} 
+          className="flex flex-col gap-4"
+          >
 
-        <div>
-          <label htmlFor="name">Confirm Password</label>
-          <div>
-          <input
-            onChange={handleChange}
-            className='border-2 w-96 p-1 pl-2 rounded-md text-black'
-            type='password'
-            id='confirmPassword'
-            name='confirmPassword'
-            value={signInfo.confirmPassword}
-          />
+            <div>
+              <label htmlFor="name" className='pl-2 text-md'>Name</label>
+              <div className='relative'>
+                <User className='size-6 absolute top-1 left-2 pointer-events-none text-gray-400'/>
+                <input 
+                onChange={(e)=>setsignInfo({...signInfo,name:e.target.value})}
+                type="text" 
+                name="name" 
+                id="name" 
+                value={signInfo.name}
+                className={`border-2 w-80 sm:w-96 p-1 pl-10 rounded-lg focus:outline-none focus:ring-gray-400 ${theme?"text-gray-400":"text-black"}`}
+                />
+              </div>
           </div>
-        </div>
 
-        <div>
-          <button
-          className='border-2 bg-blue-600 hover:bg-blue-500 rounded-md w-96 py-1' 
-          type="submit">
-            Sign Up
-          </button>
-        </div>
+          <div>
+            <label htmlFor="email" className='pl-2 text-md'>Email</label>
+            <div className='relative'>
+              <Mail className='size-6 absolute top-1 left-2 pointer-events-none text-gray-400'/>
+              <input 
+              onChange={(e)=>setsignInfo({...signInfo,email:e.target.value})}
+              type="text" 
+              name="email" 
+              id="email" 
+              value={signInfo.email}
+              className={`border-2 w-80 sm:w-96 p-1 pl-10 rounded-lg focus:outline-none focus:ring-gray-400 ${theme?"text-gray-400":"text-black"}`}
+              />
+            </div>
+          </div>
 
-        <span className='text-center'>
-          Already have an account?{" "}
-          <Link to='/login' className='text-blue-600 hover:underline'>
-          Login
-          </Link>
-        </span>
-      </form>
+          <div>
+            <label htmlFor="password" className='pl-2 text-md'>Password</label>
+            <div className='relative'>
+              <Lock className='size-6 absolute top-1 left-2 pointer-events-none text-gray-400'/>
+              <input 
+              onChange={(e)=>setsignInfo({...signInfo,password:e.target.value})}
+              type="password" 
+              name="password" 
+              id="password" 
+              value={signInfo.password}
+              className={`border-2 w-80 sm:w-96 p-1 pl-10 rounded-lg focus:outline-none focus:ring-gray-400 ${theme?"text-gray-400":"text-black"}`}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="password" className='pl-2 text-md'>Confirm Password</label>
+            <div className='relative'>
+              <Lock className='size-6 absolute top-1 left-2 pointer-events-none text-gray-400'/>
+              <input 
+              onChange={(e)=>setsignInfo({...signInfo,confirmPassword:e.target.value})}
+              type="password" 
+              name="confirmPassword" 
+              id="confirmPassword" 
+              value={signInfo.confirmPassword}
+              className={`border-2 w-80 sm:w-96 p-1 pl-10 rounded-lg focus:outline-none focus:ring-gray-400 ${theme?"text-gray-400":"text-black"}`}
+              />
+            </div>
+          </div>
+            
+
+          <div className='flex flex-col justify-center items-center gap-5 mt-7'>
+            <div>
+              <button 
+              type="submit"
+              className='bg-blue-600 px-auto flex justify-center hover:bg-blue-500 hover:scale-105 transition-all ease-in-out rounded-lg w-80 sm:w-96 py-1'
+              disabled={isloading}
+              >
+                { isloading?
+                  <>
+                    <Loader className='animate-spin size-6 mr-2'/>
+                    Loading...
+                  </>
+                :
+                <span>Sign Up</span>
+                }
+              </button>
+            </div>
+
+            <span className='text-center'>
+              Don't have an account? {" "}
+              <Link to='/login' className='text-blue-600 hover:underline hover:text-blue-500'>Login</Link>
+            </span>
+          </div>
+        </motion.form>
+      </div>
     </div>
+  </div>
   )
 }
 

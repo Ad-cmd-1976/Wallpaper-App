@@ -48,7 +48,7 @@ const Landingpage = () => {
           >
             <img src={image.url} className='w-full h-full object-cover cursor-pointer transition-all ease-in-out hover:scale-110'></img>
             <div
-            className='absolute bottom-4 right-4 sm:bottom-5 sm:right-5 bg-black/60 backdrop-blur-md p-2 rounded-full cursor-pointer w-fit -translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all ease-in-out duration-200'
+            className='absolute bottom-4 right-4 sm:bottom-5 sm:right-5 bg-black/60 backdrop-blur-md p-2 rounded-full cursor-pointer w-fit -translate-y-10 lg:opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all ease-in-out duration-200'
             >
               <Download className='size-9'/>
             </div>
