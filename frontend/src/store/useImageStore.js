@@ -46,4 +46,36 @@ export const useImageStore=create((set)=>({
             set({ isLoading:false });
         }
     },
+
+    downloadImage:async (publicId)=>{
+        try{
+            const response=await axios.get(`/images/download/${publicId}`,{
+                responseType:'blob',
+            });
+            const url=window.URL.createObjectURL(new Blob([response.data]));
+            const link=document.createElement('a');
+            link.href=url;
+            link.setAttribute('download', `${publicId}.jpg`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        }
+        catch(error){
+            if(error.response && error.response.data instanceof Blob){
+                const reader=new FileReader();
+                reader.onload=()=>{
+                    try{
+                        const json=JSON.parse(reader.result);
+                        toast.error(json.message || "Download Failed json error");
+                    }
+                    catch(e){
+                        toast.error("non-json error");
+                    }
+                }
+                reader.readAsText(error.response.data);
+            }
+            else toast.error(error.message || "Download Failed!");
+            console.log("Error in downloadImage function", error.message);
+        }
+    }
 }))

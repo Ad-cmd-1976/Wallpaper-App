@@ -6,7 +6,7 @@ import { toast } from 'react-hot-toast';
 import LoadingSpinner from './LoadingSpinner';
 import { useAuthStore } from '../store/useAuthStore.js';
 const Landingpage = () => {
-  const {imageList,setimageList,nextCursor,setnextCursor,getImages, isLoading}=useImageStore();
+  const {imageList,setimageList,nextCursor,setnextCursor,getImages, isLoading, downloadImage}=useImageStore();
   const{theme}=useThemeStore();
   const {user}=useAuthStore();
   
@@ -50,7 +50,7 @@ const Landingpage = () => {
             <div
             className='absolute bottom-4 right-4 sm:bottom-5 sm:right-5 bg-black/60 backdrop-blur-md p-2 rounded-full cursor-pointer w-fit -translate-y-10 lg:opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all ease-in-out duration-200'
             >
-              <Download className='size-9'/>
+              <Download className='size-9' onClick={()=>downloadImage(image.public_id)}/>
             </div>
           </div>
         ))}
