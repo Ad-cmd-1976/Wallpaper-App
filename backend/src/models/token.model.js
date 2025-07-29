@@ -17,6 +17,6 @@ const tokenSchema=new mongoose.Schema({
     }
 });
 
-const TokenModel=new mongoose.model("refresh-token",tokenSchema);
+const TokenModel=mongoose.model("refresh-token",tokenSchema);
 
 export default TokenModel;

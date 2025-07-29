@@ -20,11 +20,19 @@ const UserSchema=new mongoose.Schema(
             enum:["yes","no"],
             default:"no"
         },
+        subscriptionExpiresAt:{
+            type:Date
+        },
+        purchasedWallpapers:[{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"wallpapers"
+        }]
     },
     {
         timestamps:true
     }
 )
 
-const UserModel=new mongoose.model('users',UserSchema);
+const UserModel=mongoose.model('users',UserSchema);
+
 export default UserModel;
