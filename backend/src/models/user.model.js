@@ -15,6 +15,11 @@ const UserSchema=new mongoose.Schema(
             type:String,
             required:true
         },
+        role:{
+            type:String,
+            enum:["customer","admin"],
+            default:"customer"
+        },
         subscription:{
             type:String,
             enum:["yes","no"],

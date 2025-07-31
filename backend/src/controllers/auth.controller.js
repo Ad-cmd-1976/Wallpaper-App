@@ -69,8 +69,10 @@ export const signup=async (req,res)=>{
             name:newUser.name,
             email:newUser.email,
             subscription:newUser.subscription,
+            role:user.role
         });
-    }catch(error){
+    }
+    catch(error){
         console.log("Error in signUp controller:",error.response.data.error);
         res.status(500).json({message:'Internal Server Error',success:false});
     }
@@ -94,7 +96,8 @@ export const login=async (req,res)=>{
             _id:user._id,
             name:user.name,
             email:user.email,
-            subscription:user.subscription
+            subscription:user.subscription,
+            role:user.role
         })
     }
     catch(error){

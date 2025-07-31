@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const wallpaperSchema=new mongoose.Schema({
+const imageSchema=new mongoose.Schema({
     title:{
         type:String,
         required:true
@@ -18,6 +18,6 @@ const wallpaperSchema=new mongoose.Schema({
     timestamps:true
 });
 
-const WallpaperModel=mongoose.model("wallpaper",wallpaperSchema);
+const ImageModel=mongoose.model("image", imageSchema);
 
-export default WallpaperModel;
+export default ImageModel;

@@ -6,7 +6,7 @@ import { useThemeStore } from "../store/useThemeStore.js";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { useUtilStore } from "../store/useUtilStore.js";
 import { useImageStore } from "../store/useImageStore.js";
-import { Menu, Sun, Moon, Search, LogOut, LogIn } from 'lucide-react';
+import { Menu, Sun, Moon, Search, LogOut, LogIn, Lock } from 'lucide-react';
 
 const Navbar = () => {
   const [searchVal, setsearchVal] = useState("");
@@ -47,10 +47,7 @@ const Navbar = () => {
       } border-2 border-green-500 w-full`}
     >
       <div className="flex flex-wrap justify-between p-4">
-        <div className="flex items-center gap-3">
-          <div onClick={changeDisplay} className="pt-1">
-            <Menu className="size-6 sm:size-7"/>
-          </div>
+        <div className="flex items-center">
           <Link to='/' className="text-xl sm:text-2xl lg:text-3xl flex items-center font-bold text-blue-700">
             Freepixz
           </Link>
@@ -88,6 +85,12 @@ const Navbar = () => {
               </Link>
             )}
           </div>
+          { user?.role==="admin" && (
+              <Link to='/admin-dashboard' className="bg-blue-700 px-2 rounded-xl py-1 hover:bg-blue-600 flex justify-center items-center gap-1">
+                <Lock className="size-4 sm:size-5" />
+                <span className="hidden sm:inline">Admin</span>
+              </Link>
+          )}
         </div>
       </div>
 

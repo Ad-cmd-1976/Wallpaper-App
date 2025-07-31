@@ -6,7 +6,7 @@ import Navbar from './components/Navbar'
 import HomePage from './pages/HomePage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import SignupPage from './pages/SignupPage.jsx'
-import Sidebar from './components/Sidebar'
+import AdminPage from './pages/AdminPage.jsx';
 import { useAuthStore } from './store/useAuthStore.js'
 import './App.css'
 
@@ -22,11 +22,11 @@ function App() {
   return (
     <div>
       <Navbar/>
-      <Sidebar/>
       <Routes>
         <Route path='/' element={<HomePage/>}></Route>
         <Route path='/login' element={!user?<LoginPage/>:<Navigate to='/' />}></Route>
         <Route path='/signup' element={!user?<SignupPage/>:<Navigate to='/' />}></Route>
+        <Route path='/admin-dashboard' element={user?.role==="admin" ? <AdminPage/> : <Navigate to='/'/>}></Route>
       </Routes>
       <Toaster />
     </div>

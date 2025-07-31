@@ -77,5 +77,19 @@ export const useImageStore=create((set)=>({
             else toast.error(error.message || "Download Failed!");
             console.log("Error in downloadImage function", error.message);
         }
+    },
+
+    uploadImage:async (imageData)=>{
+        set({ isLoading:true });
+        try{
+            const res=await axios.post('/images/upload', imageData);
+            toast.success(res.data.message);
+        }
+        catch(error){
+            console.log("Error in uploadImage function of useImageStore",error.message);
+        }
+        finally{
+            set({ isLoading:false });
+        }
     }
 }))
