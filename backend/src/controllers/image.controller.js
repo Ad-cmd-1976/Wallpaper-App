@@ -1,6 +1,6 @@
 import cloudinary from '../lib/cloudinary.js';
 import https from 'https';
-import ImageModel from '../models/wallpaper.model.js';
+import ImageModel from '../models/image.model.js';
 
 export const getImages=async (req,res)=>{
     try{
@@ -72,10 +72,10 @@ export const downloadImage = async (req, res) => {
 
 
 export const uploadImage=async (req,res)=>{
-    const { title, imageUrl, price }=req.body;
+    const { title, imageUrl, price, isPremium, tags, discountPercentage }=req.body;
     if(!title || !imageUrl) return res.status(400).json({ message:"Title and Image Url are required!" });
     try{
-        const newImage=new ImageModel({ title, imageUrl, price});
+        const newImage=new ImageModel({ title, imageUrl, price, isPremium, tags, discountPercentage });
         await newImage.save();
         return res.status(200).json({ message:"Image Uploaded Successfully!" });
     }

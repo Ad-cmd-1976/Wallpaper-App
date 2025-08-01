@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useImageStore } from '../store/useImageStore';
 import { motion } from 'framer-motion';
 import { useThemeStore } from '../store/useThemeStore';
-import { FileText, Link, DollarSign, Loader } from 'lucide-react';
+import { FileText, Link, DollarSign, Loader, Percent } from 'lucide-react';
 
 const AdminPage = () => {
     const { uploadImage, isLoading }=useImageStore();
@@ -11,12 +11,21 @@ const AdminPage = () => {
       title: '',
       imageUrl: '',
       price: 0,
+      tags: '',
+      discountPercentage: 0,
+      isPremium: false,
     });
   
     const handleUpload = async (e) => {
       e.preventDefault();
-      uploadImage(imageData);
-      setimageData({title:"",imageUrl:"",price:""});
+      const payload=({ 
+        ...imageData,
+        tags:imageData.tags.split(',').map(tag=>tag.trim()).filter(Boolean),
+        discountPercentage:Number(imageData.discountPercentage),
+        price:Number(imageData.price)
+      });
+      uploadImage(payload);
+      setimageData({ title:"", imageUrl:"", price:0, tags:'', discountPercentage:0, isPremium:false });
     };
 
   return (
@@ -70,6 +79,22 @@ const AdminPage = () => {
             </div>
 
             <div>
+              <label htmlFor="tags" className='pl-2 text-md'>Tags (comma separated)</label>
+              <div className='relative'>
+                <FileText className='size-6 absolute top-1 left-2 pointer-events-none text-gray-400' />
+                <input
+                  onChange={(e) => setimageData({ ...imageData, tags: e.target.value })}
+                  type="text"
+                  name="tags"
+                  id="tags"
+                  value={imageData.tags}
+                  placeholder="Nature, Dark, Abstract"
+                  className={`border-2 w-80 sm:w-96 p-1 pl-10 rounded-lg focus:outline-none focus:ring-gray-400 ${theme ? "text-gray-400" : "text-black"}`}
+                />
+              </div>
+            </div>
+
+            <div>
               <label htmlFor="price" className='pl-2 text-md'>Price</label>
               <div className='relative'>
                 <DollarSign className='size-6 absolute top-1 left-2 pointer-events-none text-gray-400'/>
@@ -80,6 +105,32 @@ const AdminPage = () => {
                 id="price" 
                 value={imageData.price}
                 className={`border-2 w-80 sm:w-96 p-1 pl-10 rounded-lg focus:outline-none focus:ring-gray-400 ${theme?"text-gray-400":"text-black"}`}
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="isPremium"
+                id="isPremium"
+                checked={imageData.isPremium}
+                onChange={(e) => setimageData({ ...imageData, isPremium: e.target.checked })}
+              />
+              <label htmlFor="isPremium" className='text-md'>Is Premium?</label>
+            </div>
+
+            <div>
+              <label htmlFor="discountPercentage" className='pl-2 text-md'>Discount % (for Plus users)</label>
+              <div className='relative'>
+                <Percent className='size-6 absolute top-1 left-2 pointer-events-none text-gray-400' />
+                <input
+                  onChange={(e) => setimageData({ ...imageData, discountPercentage: e.target.value })}
+                  type="number"
+                  name="discountPercentage"
+                  id="discountPercentage"
+                  value={imageData.discountPercentage}
+                  className={`border-2 w-80 sm:w-96 p-1 pl-10 rounded-lg focus:outline-none focus:ring-gray-400 ${theme ? "text-gray-400" : "text-black"}`}
                 />
               </div>
             </div>
