@@ -79,14 +79,35 @@ export const useImageStore=create((set)=>({
         }
     },
 
-    uploadImage:async (imageData)=>{
+    uploadImage:async (image,imageData)=>{
         set({ isLoading:true });
-        try{
-            const res=await axios.post('/images/upload', imageData);
+        
+        try {
+            if(!image || !imageData.title) return toast.error("Image and title are required!");
+            const formData = new FormData();
+            formData.append("file", image);
+            formData.append("upload_preset", "wallpaper_upload");
+            formData.append("folder", "wallpapers");
+            let updatedData={};
+            try{
+                const res = await axios.post(`https://api.cloudinary.com/v1_1/djtrvpcnf/image/upload`, formData, {
+                    withCredentials:false
+                });
+                updatedData={
+                    ...imageData,
+                    imageUrl:res.data.secure_url,
+                    publicId:res.data.public_id,
+                    tags:imageData.tags.split(",").map(tag => tag.trim()).filter(Boolean)
+                }
+            }
+            catch(error){
+                console.error("Cloudinary upload failed:", error);
+            }
+            const res=await axios.post('/images/upload', updatedData);
             toast.success(res.data.message);
-        }
-        catch(error){
-            console.log("Error in uploadImage function of useImageStore",error.message);
+        } 
+        catch (error) {
+            console.log("Error in handle upload:", error);
         }
         finally{
             set({ isLoading:false });

@@ -71,16 +71,15 @@ export const downloadImage = async (req, res) => {
 }
 
 
-export const uploadImage=async (req,res)=>{
-    const { title, imageUrl, price, isPremium, tags, discountPercentage }=req.body;
-    if(!title || !imageUrl) return res.status(400).json({ message:"Title and Image Url are required!" });
+export const uploadImageData=async (req,res)=>{
+    const { title, imageUrl, price, isPremium, tags, discountPercentage, publicId }=req.body;
     try{
-        const newImage=new ImageModel({ title, imageUrl, price, isPremium, tags, discountPercentage });
+        const newImage=new ImageModel({ title, imageUrl, price, isPremium, tags, discountPercentage, publicId });
         await newImage.save();
         return res.status(200).json({ message:"Image Uploaded Successfully!" });
     }
     catch(error){
-        console.log("Error in uploadImage function of image controller",error.message);
+        console.log("Error in uploadImage function of image controller",error);
         return res.status(500).json({ message:"Internal Server Error!" });
     }
 }

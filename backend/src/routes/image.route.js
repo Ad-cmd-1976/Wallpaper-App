@@ -1,5 +1,5 @@
 import express from 'express';
-import { downloadImage, getImages, searchImages, uploadImage } from '../controllers/image.controller.js';
+import { downloadImage, getImages, searchImages, uploadImageData } from '../controllers/image.controller.js';
 import { protectedRoute, adminRoute } from '../middleware/protected.middleware.js';
 
 const router=express.Router();
@@ -7,6 +7,6 @@ const router=express.Router();
 router.get('/getImages', getImages);
 router.get('/search', searchImages);
 router.get('/download/:publicId', protectedRoute, downloadImage);
-router.post('/upload', protectedRoute, adminRoute, uploadImage);
+router.post('/upload', protectedRoute, adminRoute, uploadImageData);
 
 export default router;
