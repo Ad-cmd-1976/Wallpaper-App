@@ -34,12 +34,9 @@ export const useImageStore=create((set, get)=>({
         set({ isLoading:true });
         try{
             const params=new URLSearchParams();
-            params.append('expression',searchVal);
-            // if(nextCursor){
-            //     params.append('next_cursor',nextCursor)
-            // }
+            params.append('q',searchVal);
             const response=await axios.get('/images/search',{ params:params });
-            return response.data;
+            set({ imageList:response.data.resources });
         }
         catch(error){
             toast.error(error.response.data.message || "Failed to fetch images!");

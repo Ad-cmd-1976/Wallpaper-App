@@ -3,9 +3,11 @@ import Line from '../assets/line';
 import { Link } from 'react-router-dom';
 import LowerButton from './LowerButton';
 import { useThemeStore } from '../store/useThemeStore';
+import { useImageStore } from '../store/useImageStore';
 
 const Lowerbar = () => {
   const [scroll, setScroll] = useState(0);
+  const { getImages }=useImageStore();
   const {theme}=useThemeStore();
   
   return (
@@ -16,7 +18,12 @@ const Lowerbar = () => {
         >
         Freepixz+
         </Link>
-        <Link to='/' className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}>Home</Link>
+        <div 
+        className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}
+        onClick={()=>getImages(1)}
+        >
+          Home
+        </div>
       </div>
 
       <div>

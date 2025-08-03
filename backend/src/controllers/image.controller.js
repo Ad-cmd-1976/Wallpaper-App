@@ -26,12 +26,12 @@ export const getImages=async (req,res)=>{
 export const searchImages=async (req,res)=>{
     try{
         const searchQuery=req.query.q?.trim();
-        if(!searchQuery) return req.status(400).json({ message:"Search Expression is Required!" });
+        if(!searchQuery) return res.status(400).json({ message:"Search Expression is Required!" });
 
         const words=searchQuery.split(/\s+/).filter(Boolean);
         const regexes=words.map(word=>new RegExp(word,'i'));
 
-        const images=await ImageModel({
+        const images=await ImageModel.find({
             $or:[
                 { title: { $in: regexes }},
                 { tags: { $in: regexes }}

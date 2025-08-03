@@ -6,21 +6,17 @@ import { useThemeStore } from "../store/useThemeStore.js";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { useUtilStore } from "../store/useUtilStore.js";
 import { useImageStore } from "../store/useImageStore.js";
-import { Menu, Sun, Moon, Search, LogOut, LogIn, Lock } from 'lucide-react';
+import { Sun, Moon, Search, LogOut, LogIn, Lock } from 'lucide-react';
 
 const Navbar = () => {
   const [searchVal, setsearchVal] = useState("");
   const { user, logout }=useAuthStore();
   const { theme, setTheme }=useThemeStore();
   const { display, setdisplay }=useUtilStore();
-  const { setimageList, nextCursor, setnextCursor, searchImages}=useImageStore();
+  const { searchImages}=useImageStore();
 
   const changeTheme = (theme) => {
     setTheme(!theme);
-  };
-
-  const changeDisplay=()=>{
-    setdisplay(!display);
   };
 
   const handleLogout=async ()=>{
@@ -30,10 +26,7 @@ const Navbar = () => {
   const handleSubmit=async (e)=>{
     e.preventDefault();
     try{
-      const response=await searchImages(searchVal);
-      setimageList(response.resources);
-      setnextCursor(response.next_cursor);
-      console.log(nextCursor);
+      await searchImages(searchVal);
     }
     catch(error){
       toast.error(error.response.data.message || "Failed to load images!");
