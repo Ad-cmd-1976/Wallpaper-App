@@ -3,22 +3,24 @@ import { toast } from 'react-hot-toast';
 import axios from '../lib/axios.js';
 
 
-export const useImageStore=create((set)=>({
+export const useImageStore=create((set, get)=>({
     imageList:[],
     isLoading:false,
-    nextCursor:null,
-    setnextCursor:(next_cursor)=>set({nextCursor:next_cursor}),
-    setimageList:(images)=>set({imageList:images}),
+    page:1,
+    limit:10,
 
-    getImages:async (next_cursor)=>{
+    getImages:async (page=1)=>{
         set({ isLoading:true });
         try{
             const params=new URLSearchParams();
-            if(next_cursor){
-                params.append('next_cursor',next_cursor);
-            }
+            params.append("page", page);
+            params.append("limit", get().limit);
             const response=await axios.get('/images/getImages', { params:params });
-            return response.data;
+
+            set((state)=>({
+                imageList: page===1 ? response.data.images : [...state.imageList,...response.data.images],
+                page
+            }))
         }
         catch(error){
             toast.error(error.response?.data?.message || "Failed to fetch images!");

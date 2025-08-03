@@ -4,13 +4,18 @@ import ImageModel from '../models/image.model.js';
 
 export const getImages=async (req,res)=>{
     try{
-        const response=await cloudinary.api.resources({
-            type:'upload',
-            resource_type:'image',
-            max_results:10,
-            next_cursor:req.query.next_cursor
+        const page=parseInt(req.query.page) || 1;
+        const limit=parseInt(req.query.limit) || 10;
+        const skip=(page-1)*limit;
+
+        const images=await ImageModel.find().sort({ createdAt:-1 }).skip(skip).limit(limit);
+        const total=await ImageModel.countDocuments();
+        return res.json({
+            images,
+            total,
+            page,
+            totalPages:Math.ceil(total/limit)
         })
-        res.json(response);
     }
     catch(error){
         res.status(500).json({ message:'Internal Server Error!' });
@@ -20,8 +25,20 @@ export const getImages=async (req,res)=>{
 
 export const searchImages=async (req,res)=>{
     try{
-        const response=await cloudinary.search.expression(req.query.expression).sort_by('created_at','desc').max_results(10).execute();
-        res.json(response);
+        const searchQuery=req.query.q?.trim();
+        if(!searchQuery) return req.status(400).json({ message:"Search Expression is Required!" });
+
+        const words=searchQuery.split(/\s+/).filter(Boolean);
+        const regexes=words.map(word=>new RegExp(word,'i'));
+
+        const images=await ImageModel({
+            $or:[
+                { title: { $in: regexes }},
+                { tags: { $in: regexes }}
+            ]
+        }).sort({ createdAt:-1 });
+
+        res.status(200).json({ resources:images });
     }
     catch(error){
         res.status(500).json({ message:'Internal Server Error!' });
