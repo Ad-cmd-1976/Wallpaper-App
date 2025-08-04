@@ -53,11 +53,13 @@ export const useImageStore=create((set, get)=>({
             toast.error(error.response.data.message || "Failed to fetch images!");
         }
         finally{
-            set({ isLoading:false });
+            set({ isLoading:false, searchVal:'' });
+            
         }
     },
 
     downloadImage:async (publicId)=>{
+        set({})
         try{
             const params=new URLSearchParams();
             params.append("publicId", publicId);
