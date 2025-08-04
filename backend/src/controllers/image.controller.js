@@ -1,4 +1,3 @@
-import cloudinary from '../lib/cloudinary.js';
 import https from 'https';
 import ImageModel from '../models/image.model.js';
 
@@ -29,7 +28,7 @@ export const searchImages=async (req,res)=>{
         const page=parseInt(req.query.page) || 1;
         const limit=parseInt(req.query.limit) || 10;
         const skip=(page-1)*limit;
-        
+
         if(!searchQuery) return res.status(400).json({ message:"Search Expression is Required!" });
 
         const words=searchQuery.split(/\s+/).filter(Boolean);
@@ -58,21 +57,20 @@ export const searchImages=async (req,res)=>{
 }
 
 export const downloadImage = async (req, res) => {
-    try {
-        const { publicId }=req.params;
-        const user=req.user;
+    try{
+        const publicId=req.query.publicId;
 
-        const { secure_url }=await cloudinary.api.resource(publicId, {
-            resource_type: 'image'
-        });
+        const image=await ImageModel.findOne({ publicId });
 
-        https.get(secure_url, (cloudinaryRes) => {
+        if(!image) return res.status(404).json({ message:"Image Not Found!" });
+
+        https.get(image.imageUrl, (imageRes) => {
             res.setHeader('Content-disposition', `attachment; filename="${publicId}.jpg"`);
             res.setHeader('Content-Type', 'image/jpeg');
 
-            cloudinaryRes.pipe(res);
+            imageRes.pipe(res);
 
-            cloudinaryRes.on('error', (err) => {
+            imageRes.on('error', (err) => {
                 console.error('Cloudinary stream error', err.message);
                 if(!res.headersSent) {
                     res.status(500).json({ message: "Failed to stream image" });
@@ -84,7 +82,7 @@ export const downloadImage = async (req, res) => {
 
         }).on('error', (err) => {
             console.error('HTTPS GET error:', err.message);
-            if (!res.headersSent) {
+            if(!res.headersSent){
                 res.status(500).json({ message: "Failed to download image" });
             }
         });

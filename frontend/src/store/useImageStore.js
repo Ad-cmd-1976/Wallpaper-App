@@ -59,8 +59,11 @@ export const useImageStore=create((set, get)=>({
 
     downloadImage:async (publicId)=>{
         try{
-            const response=await axios.get(`/images/download/${publicId}`,{
+            const params=new URLSearchParams();
+            params.append("publicId", publicId);
+            const response=await axios.get(`/images/download`,{
                 responseType:'blob',
+                params:params,
             });
             const url=window.URL.createObjectURL(new Blob([response.data]));
             const link=document.createElement('a');

@@ -6,7 +6,7 @@ const router=express.Router();
 
 router.get('/getImages', getImages);
 router.get('/search', searchImages);
-router.get('/download/:publicId', protectedRoute, downloadImage);
+router.get('/download', protectedRoute, downloadImage);
 router.post('/upload', protectedRoute, adminRoute, uploadImageData);
 
 export default router;
