@@ -8,7 +8,7 @@ import { useImageStore } from '../store/useImageStore';
 
 const Lowerbar = () => {
   const [scroll, setScroll] = useState(0);
-  const { getImages, searchImages, searchVal, setsearchVal }=useImageStore();
+  const { resetToHome, searchImages, searchVal, setsearchVal }=useImageStore();
   const {theme}=useThemeStore();
 
   const handleSubmit=async (e)=>{
@@ -53,7 +53,7 @@ const Lowerbar = () => {
           </Link>
           <div 
           className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}
-          onClick={()=>getImages(1)}
+          onClick={()=>resetToHome()}
           >
             Home
           </div>

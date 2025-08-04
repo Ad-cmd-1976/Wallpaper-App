@@ -11,8 +11,13 @@ export const useImageStore=create((set, get)=>({
     searchVal:'',
     setsearchVal:(val)=>set({ searchVal:val }),
 
+    resetToHome:async ()=>{
+        set({ searchVal:'', imageList:[], page:1 });
+        await get().getImages(1);
+    },
+
     getImages:async (page=1)=>{
-        const { searchVal, imageList }=get();
+        const { searchVal }=get();
         if(searchVal) return await get().searchImages(searchVal,page);
 
         set({ isLoading:true });
@@ -53,8 +58,7 @@ export const useImageStore=create((set, get)=>({
             toast.error(error.response.data.message || "Failed to fetch images!");
         }
         finally{
-            set({ isLoading:false, searchVal:'' });
-            
+            set({ isLoading:false });
         }
     },
 
