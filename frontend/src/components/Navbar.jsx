@@ -86,27 +86,6 @@ const Navbar = () => {
           )}
         </div>
       </div>
-
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center justify-center gap-2 w-full px-4 pb-4">
-        <div className={`flex items-center bg-white rounded-2xl w-full sm:w-[75%] px-2 py-1 border-2 ${theme?"border-gray-300": "border-white"}`}>
-          <Search color={theme ? "gray" : "black"} />
-          <input
-            onChange={(e) => setsearchVal(e.target.value)}
-            className="w-full bg-white text-gray-400 outline-none ml-2 text-sm"
-            value={searchVal}
-            type="search"
-            placeholder="Search Photos and Wallpapers"
-          />
-        </div>
-        <div className="w-full sm:w-auto">
-          <button
-            className="bg-blue-700 w-full sm:w-auto px-3 py-1 rounded-xl hover:bg-blue-600"
-            type="submit"
-          >
-            Search
-          </button>
-        </div>
-      </form>
     </div>
   );
 };
