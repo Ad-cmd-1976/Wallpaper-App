@@ -1,19 +1,14 @@
-import { useState } from "react";
 import Line from "../assets/line";
 import { Link } from "react-router-dom";
-import { toast } from 'react-hot-toast';
 import { useThemeStore } from "../store/useThemeStore.js";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { useUtilStore } from "../store/useUtilStore.js";
-import { useImageStore } from "../store/useImageStore.js";
-import { Sun, Moon, Search, LogOut, LogIn, Lock } from 'lucide-react';
+import { Sun, Moon, LogOut, LogIn, Lock } from 'lucide-react';
 
 const Navbar = () => {
-  const [searchVal, setsearchVal] = useState("");
   const { user, logout }=useAuthStore();
   const { theme, setTheme }=useThemeStore();
   const { display, setdisplay }=useUtilStore();
-  const { searchImages}=useImageStore();
 
   const changeTheme = (theme) => {
     setTheme(!theme);
@@ -22,16 +17,6 @@ const Navbar = () => {
   const handleLogout=async ()=>{
     logout();
   };
-
-  const handleSubmit=async (e)=>{
-    e.preventDefault();
-    try{
-      await searchImages(searchVal);
-    }
-    catch(error){
-      toast.error(error.response.data.message || "Failed to load images!");
-    }
-  }
   
   return (
     <div

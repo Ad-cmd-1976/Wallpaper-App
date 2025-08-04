@@ -8,8 +8,13 @@ export const useImageStore=create((set, get)=>({
     isLoading:false,
     page:1,
     limit:10,
+    searchVal:'',
+    setsearchVal:(val)=>set({ searchVal:val }),
 
     getImages:async (page=1)=>{
+        const { searchVal, imageList }=get();
+        if(searchVal) return await get().searchImages(searchVal,page);
+
         set({ isLoading:true });
         try{
             const params=new URLSearchParams();
@@ -30,13 +35,19 @@ export const useImageStore=create((set, get)=>({
         }
     },
 
-    searchImages:async (searchVal)=>{
+    searchImages:async (searchVal,page=1,limit=10)=>{
         set({ isLoading:true });
         try{
             const params=new URLSearchParams();
             params.append('q',searchVal);
+            params.append('page', page);
+            params.append('limit', limit);
             const response=await axios.get('/images/search',{ params:params });
-            set({ imageList:response.data.resources });
+
+            set((state)=>({
+                imageList: page===1 ? response.data.resources : [...state.imageList,...response.data.resources],
+                searchVal:searchVal
+            }))
         }
         catch(error){
             toast.error(error.response.data.message || "Failed to fetch images!");

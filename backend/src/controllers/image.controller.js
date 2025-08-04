@@ -26,6 +26,10 @@ export const getImages=async (req,res)=>{
 export const searchImages=async (req,res)=>{
     try{
         const searchQuery=req.query.q?.trim();
+        const page=parseInt(req.query.page) || 1;
+        const limit=parseInt(req.query.limit) || 10;
+        const skip=(page-1)*limit;
+        
         if(!searchQuery) return res.status(400).json({ message:"Search Expression is Required!" });
 
         const words=searchQuery.split(/\s+/).filter(Boolean);
@@ -36,9 +40,16 @@ export const searchImages=async (req,res)=>{
                 { title: { $in: regexes }},
                 { tags: { $in: regexes }}
             ]
-        }).sort({ createdAt:-1 });
+        }).sort({ createdAt:-1 }).skip(skip).limit(limit);
 
-        res.status(200).json({ resources:images });
+        const total=await ImageModel.countDocuments();
+
+        res.status(200).json({ 
+            resources:images,
+            page,
+            total,
+            totalPages:Math.ceil(total/limit)
+        });
     }
     catch(error){
         res.status(500).json({ message:'Internal Server Error!' });

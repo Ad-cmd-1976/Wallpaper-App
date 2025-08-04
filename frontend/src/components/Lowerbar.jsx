@@ -8,8 +8,7 @@ import { useImageStore } from '../store/useImageStore';
 
 const Lowerbar = () => {
   const [scroll, setScroll] = useState(0);
-  const [searchVal, setsearchVal] = useState("");
-  const { getImages, searchImages }=useImageStore();
+  const { getImages, searchImages, searchVal, setsearchVal }=useImageStore();
   const {theme}=useThemeStore();
 
   const handleSubmit=async (e)=>{
