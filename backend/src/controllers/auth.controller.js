@@ -69,11 +69,11 @@ export const signup=async (req,res)=>{
             name:newUser.name,
             email:newUser.email,
             subscription:newUser.subscription,
-            role:user.role
+            role:newUser.role
         });
     }
     catch(error){
-        console.log("Error in signUp controller:",error.response.data.error);
+        console.log("Error in signUp controller:",error);
         res.status(500).json({message:'Internal Server Error',success:false});
     }
 }
@@ -81,12 +81,12 @@ export const login=async (req,res)=>{
     try{
         const {email,password}=req.body;
 
-        if(!email || !password) return res.status(400).json({message:"All fields Required!"});
+        if(!email || !password) return res.status(400).json({ message:"All fields Required!" });
 
         const user=await UserModel.findOne({email});
         if(!user) return res.status(400).json({message:"Invalid User Credentials!"});
         const isPasswordEqual=await bcrypt.compare(password,user.password);
-        if(!isPasswordEqual) return res.status(400).json({message:"Invalid User Credentials!"});
+        if(!isPasswordEqual) return res.status(400).json({ message:"Invalid User Credentials!" });
 
         const {accessToken,refreshToken}=generateTokens(user._id);
         storeRefreshToken(user._id,refreshToken);
@@ -102,7 +102,7 @@ export const login=async (req,res)=>{
     }
     catch(error){
         console.log("Error in login controller",error.message);
-        return res.status(500).json({message:"Internal Server Error!"});
+        return res.status(500).json({ message:"Internal Server Error!" });
     }
 }
 
@@ -111,7 +111,7 @@ export const logout=async (req,res)=>{
         const refreshToken=req.cookies.refreshToken;
         if(refreshToken){
             const decoded=jwt.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET);
-            await TokenModel.findOneAndDelete({userId:decoded.userId});
+            await TokenModel.findOneAndDelete({ userId:decoded.userId });
         }
         res.clearCookie("accessToken");
         res.clearCookie("refreshToken");

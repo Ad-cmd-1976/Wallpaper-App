@@ -30,7 +30,7 @@ const UserSchema=new mongoose.Schema(
         },
         purchasedWallpapers:[{
             type:mongoose.Schema.Types.ObjectId,
-            ref:"wallpapers"
+            ref:"Image"
         }]
     },
     {
@@ -38,6 +38,6 @@ const UserSchema=new mongoose.Schema(
     }
 )
 
-const UserModel=mongoose.model('users',UserSchema);
+const UserModel=mongoose.model('User',UserSchema);
 
 export default UserModel;

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const imageSchema=new mongoose.Schema({
+const ImageSchema=new mongoose.Schema({
     title:{
         type:String,
         required:true,
@@ -38,6 +38,6 @@ const imageSchema=new mongoose.Schema({
     timestamps:true
 });
 
-const ImageModel=mongoose.model("image", imageSchema);
+const ImageModel=mongoose.model("Image", ImageSchema);
 
 export default ImageModel;
