@@ -2,7 +2,7 @@ import React from 'react'
 
 const RefundPolicy = () => {
   return (
-    <div>RefundPolicy</div>
+    <div>Cancellation & Refund Policy</div>
   )
 }
 
