@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast';
 import LoadingSpinner from './LoadingSpinner';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { usePurchaseStore } from '../store/usePurchaseStore.js';
+import { Link } from 'react-router-dom';
 const Landingpage = () => {
   const {imageList, getImages, isLoading, downloadImage, page}=useImageStore();
   const { purchaseIds, getPurchaseIds }=usePurchaseStore();
@@ -54,13 +55,6 @@ const Landingpage = () => {
         onClick={()=>getImages(page+1)}
         >Load More
         </button>
-      </div>
-
-      <div className="flex gap-4 mb-2">
-        <a href="/privacy-policy" className="hover:underline">Privacy Policy</a>
-        <a href="/terms-and-conditions" className="hover:underline">Terms & Conditions</a>
-        <a href="/refund-policy" className="hover:underline">Refund & Cancellation</a>
-        <a href="/shipping-policy" className="hover:underline">Shipping Policy</a>
       </div>
     </div>
     </>

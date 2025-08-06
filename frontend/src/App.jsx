@@ -12,6 +12,7 @@ import { useAuthStore } from './store/useAuthStore.js'
 import RefundPolicy from './pages/RefundPolicy.jsx';
 import ShippingPolicy from './pages/ShippingPolicy.jsx';
 import TermsAndConditions from './pages/TermsAndConditions.jsx';
+import { Link } from 'react-router-dom';
 import './App.css'
 
 function App() {
