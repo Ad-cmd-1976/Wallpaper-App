@@ -12,7 +12,6 @@ import { useAuthStore } from './store/useAuthStore.js'
 import RefundPolicy from './pages/RefundPolicy.jsx';
 import ShippingPolicy from './pages/ShippingPolicy.jsx';
 import TermsAndConditions from './pages/TermsAndConditions.jsx';
-import { Link } from 'react-router-dom';
 import './App.css'
 
 function App() {
@@ -38,12 +37,6 @@ function App() {
         <Route path='/terms-and-conditions' element={<TermsAndConditions/>}></Route>
       </Routes>
       <Toaster />
-      <div className="flex gap-4 mb-2">
-        <Link href="/privacy-policy" className="hover:underline">Privacy Policy</Link>
-        <Link href="/terms-and-conditions" className="hover:underline">Terms & Conditions</Link>
-        <Link href="/refund-policy" className="hover:underline">Refund & Cancellation</Link>
-        <Link href="/shipping-policy" className="hover:underline">Shipping Policy</Link>
-      </div>
     </div>
   )
 }
