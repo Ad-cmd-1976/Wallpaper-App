@@ -55,6 +55,13 @@ const Landingpage = () => {
         >Load More
         </button>
       </div>
+
+      <div className="flex gap-4 mb-2">
+        <a href="/privacy-policy" className="hover:underline">Privacy Policy</a>
+        <a href="/terms-and-conditions" className="hover:underline">Terms & Conditions</a>
+        <a href="/refund-policy" className="hover:underline">Refund & Cancellation</a>
+        <a href="/shipping-policy" className="hover:underline">Shipping Policy</a>
+      </div>
     </div>
     </>
   )
