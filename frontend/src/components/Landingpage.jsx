@@ -1,17 +1,20 @@
 import { useEffect } from 'react';
-import { Download } from 'lucide-react';
+import { Download, Lock } from 'lucide-react';
 import { useImageStore } from '../store/useImageStore.js';
 import { useThemeStore } from '../store/useThemeStore.js';
 import { toast } from 'react-hot-toast';
 import LoadingSpinner from './LoadingSpinner';
 import { useAuthStore } from '../store/useAuthStore.js';
+import { usePurchaseStore } from '../store/usePurchaseStore.js';
 const Landingpage = () => {
   const {imageList, getImages, isLoading, downloadImage, page}=useImageStore();
-  const{theme}=useThemeStore();
-  const {user}=useAuthStore();
+  const { purchaseIds, getPurchaseIds }=usePurchaseStore();
+  const{ theme }=useThemeStore();
+  const { user }=useAuthStore();
   
   useEffect(() => {
     getImages(1);
+    if(user) getPurchaseIds();
   }, [])
 
   if(isLoading) return (<LoadingSpinner/>)
@@ -27,11 +30,19 @@ const Landingpage = () => {
           className='relative group overflow-hidden rounded-lg shadow-md'
           >
             <img src={image.imageUrl} className='w-full h-full object-cover cursor-pointer transition-all ease-in-out hover:scale-110'></img>
-            <div
-            className='absolute bottom-4 right-4 sm:bottom-5 sm:right-5 bg-black/60 backdrop-blur-md p-2 rounded-full cursor-pointer w-fit -translate-y-10 lg:opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all ease-in-out duration-200'
-            >
-              <Download className='size-9' onClick={()=>downloadImage(image.publicId)}/>
-            </div>
+            { ((user && image.isPremium && purchaseIds.includes(image._id)) || (!image.isPremium)) ? (
+              <div
+              className='absolute bottom-4 right-4 sm:bottom-5 sm:right-5 bg-black/60 backdrop-blur-md p-2 rounded-full cursor-pointer w-fit -translate-y-10 lg:opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all ease-in-out duration-200'
+              >
+                <Download className='size-9' onClick={()=>downloadImage(image.publicId)}/>
+              </div>
+            ):(
+              <div
+              className='absolute bottom-4 right-4 sm:bottom-5 sm:right-5 bg-black/60 backdrop-blur-md p-2 rounded-full cursor-pointer w-fit -translate-y-10 lg:opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all ease-in-out duration-200'
+              >
+                <Lock className='size-9 pointer-events-none'/>
+              </div>
+            )}
           </div>
         ))}
       </div>

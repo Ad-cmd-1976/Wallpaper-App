@@ -32,3 +32,17 @@ export const createPurchase=async (req,res)=>{
         console.log("Error in createPurchase function in image controller",error);
     }
 }
+export const getPurchasedList=async (req,res)=>{
+    try{
+        const userId=req.user._id;
+        
+        const purchases=await PurchaseModel.find({ userId }).select("imageId");
+        const purchaseIds=purchases.map((purchase)=>purchase.imageId.toString());
+
+        return res.status(200).json({ purchaseIds });
+    }
+    catch(error){
+        console.log("Error in getPurchasedList function in purchase controller",error);
+        return res.status(500).json({ message:"Internal Server Error" });
+    }
+}
