@@ -32,6 +32,7 @@ export const createPurchase=async (req,res)=>{
         console.log("Error in createPurchase function in image controller",error);
     }
 }
+
 export const getPurchasedList=async (req,res)=>{
     try{
         const userId=req.user._id;
