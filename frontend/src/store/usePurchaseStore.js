@@ -17,6 +17,7 @@ export const usePurchaseStore=create((set,get)=>({
     },
 
     buyImage:async (imageId)=>{
+        set({ isLoading:true });
         try{
             const res=await axios.post(`/payment/order/${imageId}`,{ withCredentials:true });
 
@@ -35,10 +36,22 @@ export const usePurchaseStore=create((set,get)=>({
                     email:"test@razorpay.com",
                     contact:"9999999999"
                 },
-                theme:{ color:"#6366f1" }
+                theme:{ color:"#6366f1" },
+                modal:{
+                    ondismiss: function(){
+                        toast.error("Payment failed try again!");
+                    }
+                },
+                retry:{
+                    enabled:true
+                }
             };
 
             const rzp=new window.Razorpay(options);
+
+            rzp.on('payment.failed', function(){
+                toast.error("Payment Failed",response.error.description);
+            })
             rzp.open();
         }
         catch(error){
@@ -59,12 +72,16 @@ export const usePurchaseStore=create((set,get)=>({
 
             if(res.data.downloadReady){
                 await get().getPurchaseIds();
+                toast.success("Wallpaper Unlocked!!");
             }
             else toast.error("Verification Failed!");
         }
         catch(error){
             console.log("Error in verifyPayment",error);
             toast.error("Something Went Wrong!");
+        }
+        finally{
+            set({ isLoading:false });
         }
     }
 }))

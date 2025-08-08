@@ -36,7 +36,7 @@ const Lowerbar = () => {
           </div>
           <div className="w-full sm:w-auto">
             <button
-              className="bg-blue-700 w-full sm:w-auto px-3 py-1 rounded-xl hover:bg-blue-600"
+              className="bg-blue-700 w-full hidden sm:block sm:w-auto px-3 py-1 rounded-xl hover:bg-blue-600"
               type="submit"
             >
               Search
