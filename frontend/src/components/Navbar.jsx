@@ -4,10 +4,12 @@ import { useThemeStore } from "../store/useThemeStore.js";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { useUtilStore } from "../store/useUtilStore.js";
 import { Sun, Moon, LogOut, LogIn, Lock } from 'lucide-react';
+import { usePurchaseStore } from "../store/usePurchaseStore.js";
 
 const Navbar = () => {
   const { user, logout }=useAuthStore();
   const { theme, setTheme }=useThemeStore();
+  const { buyPlus }=usePurchaseStore();
   const { display, setdisplay }=useUtilStore();
 
   const changeTheme = (theme) => {
@@ -34,12 +36,12 @@ const Navbar = () => {
 
         <div className="flex flex-wrap items-center pt-1 gap-2 sm:gap-4">
           <div className="text-sm sm:text-lg">
-            <Link
-              href="/plus"
+            <button
+              onClick={()=>buyPlus()}
               className={`${theme ? 'decoration-gray-400' : 'decoration-white'} font-bold bg-gradient-to-r from-pink-500 via-yellow-500 to-cyan-500 bg-[length:200%_auto] animate-gradient bg-clip-text text-transparent text-md lg:text-lg`}
             >
               Get FreePixz+
-            </Link>
+            </button>
           </div>
 
           <div onClick={() => changeTheme(theme)} className="cursor-pointer">

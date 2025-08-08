@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import ImageModel from '../models/image.model.js';
 import crypto from 'crypto';
 import PurchaseModel from '../models/purchase.model.js';
+import UserModel from '../models/user.model.js';
 
 dotenv.config({});
 
@@ -10,6 +11,51 @@ const razorpay=new Razorpay({
     key_id:process.env.RAZORPAY_KEY_ID,
     key_secret:process.env.RAZORPAY_KEY_SECRET
 });
+
+export const createPlusUser=async (req,res)=>{
+    try{
+        const user=req.user;
+        const options={
+            amount: 1000,
+            currency: "INR",
+            receipt: `receipt_id_${user._id}`
+        }
+
+        const newOrder=await razorpay.orders.create(options);
+
+        res.json({
+            amount: options.amount,
+            currency: options.currency,
+            key: process.env.RAZORPAY_KEY_ID,
+            orderId: newOrder.id,
+            success:true
+        })
+    }
+    catch(error){
+        console.log("Error in createPlusUser function of payment controller", error);
+        res.status(500).json({ message:"Internal Server Error!" });
+    }
+}
+
+export const verifyPlusUser=async (req,res)=>{
+    try{
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature}=req.body;
+
+
+        const body=razorpay_order_id + '|' + razorpay_payment_id;
+        const expectedSignature=crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET).update(body.toString()).digest('hex');
+
+        if(expectedSignature!==razorpay_signature) return res.status(400).json({ message:"Invalid Signature!" });
+
+        await UserModel.findByIdAndUpdate(req.user._id, { subscription: "yes" });
+
+        return res.status(200).json({ message:"Welcome V.I.P!", success: true });
+    }
+    catch(error){
+        console.log("Error in verifyPlusUser function of payment controller!", error);
+        res.status(500).json({ message:"Internal Server Error!" });
+    }
+}
 
 export const createOrder=async (req,res)=>{
     try{

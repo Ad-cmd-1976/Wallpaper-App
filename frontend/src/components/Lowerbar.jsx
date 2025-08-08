@@ -3,13 +3,15 @@ import Line from '../assets/line';
 import { Link } from 'react-router-dom';
 import LowerButton from './LowerButton';
 import { Search } from 'lucide-react';
-import { useThemeStore } from '../store/useThemeStore';
-import { useImageStore } from '../store/useImageStore';
+import { useThemeStore } from '../store/useThemeStore.js';
+import { useImageStore } from '../store/useImageStore.js';
+import { usePurchaseStore } from '../store/usePurchaseStore.js';
 
 const Lowerbar = () => {
   const [scroll, setScroll] = useState(0);
   const { resetToHome, searchImages, searchVal, setsearchVal }=useImageStore();
   const {theme}=useThemeStore();
+  const { buyPlus }=usePurchaseStore();
 
   const handleSubmit=async (e)=>{
     e.preventDefault();
@@ -46,11 +48,11 @@ const Lowerbar = () => {
 
       <div className="flex gap-4">
         <div className='flex items-center gap-5'>
-          <Link to='/plus' 
-          className={`${theme ? 'decoration-gray-400' : 'decoration-white'} font-bold bg-gradient-to-r from-pink-500 via-yellow-500 to-cyan-500 bg-[length:200%_auto] animate-gradient bg-clip-text text-transparent text-md lg:text-lg`}
+          <div onClick={buyPlus} 
+          className={`${theme ? 'decoration-gray-400' : 'decoration-white'} cursor-pointer font-bold bg-gradient-to-r from-pink-500 via-yellow-500 to-cyan-500 bg-[length:200%_auto] animate-gradient bg-clip-text text-transparent text-md lg:text-lg`}
           >
           Freepixz+
-          </Link>
+          </div>
           <div 
           className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}
           onClick={()=>resetToHome()}

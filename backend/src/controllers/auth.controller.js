@@ -35,7 +35,7 @@ export const signup=async (req,res)=>{
     try{
         const {name,email,password}=req.body;
 
-        // Check the data from frontend
+
         if(!name || !email || !password){
             return res.status(401).json({message:"All Fields are required!"});
         }
@@ -47,13 +47,13 @@ export const signup=async (req,res)=>{
         }
 
 
-        // Verify if the user already exists in database
+        
         const user=await UserModel.findOne({email});
         if(user){
             return res.status(400).json({message:'User Already Exists',success:false});
         }
 
-        //Create new user and hash the password using bcrypt
+        
         const newUser=new UserModel({name,email,password});
         const salt=await bcrypt.genSalt(10);
         newUser.password=await bcrypt.hash(password,salt);
