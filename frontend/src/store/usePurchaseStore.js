@@ -17,7 +17,6 @@ export const usePurchaseStore=create((set, get)=>({
     },
 
     buyPlus:async ()=>{
-        console.log("kkk");
         try{
             const res=await axios.post('/payment/order/plus-user', {}, {
                 withCredentials: true

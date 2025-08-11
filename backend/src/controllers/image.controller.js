@@ -9,8 +9,15 @@ export const getImages=async (req,res)=>{
 
         const images=await ImageModel.find().sort({ createdAt:-1 }).skip(skip).limit(limit);
         const total=await ImageModel.countDocuments();
+
+        const mapping=images.map((image)=>{
+            let imageObj=image.toObject();
+            imageObj.imageUrl=imageObj.previewUrl || imageObj.imageUrl;
+            return imageObj;
+        })
+        
         return res.json({
-            images,
+            images:mapping,
             total,
             page,
             totalPages:Math.ceil(total/limit)
@@ -28,23 +35,29 @@ export const searchImages=async (req,res)=>{
         const page=parseInt(req.query.page) || 1;
         const limit=parseInt(req.query.limit) || 10;
         const skip=(page-1)*limit;
-
+        
         if(!searchQuery) return res.status(400).json({ message:"Search Expression is Required!" });
-
+        
         const words=searchQuery.split(/\s+/).filter(Boolean);
         const regexes=words.map(word=>new RegExp(word,'i'));
-
+        
         const images=await ImageModel.find({
             $or:[
                 { title: { $in: regexes }},
                 { tags: { $in: regexes }}
             ]
         }).sort({ createdAt:-1 }).skip(skip).limit(limit);
-
+        
         const total=await ImageModel.countDocuments();
-
+        
+        const mapping=images.map((image)=>{
+            let imageObj=image.toObject();
+            imageObj.imageUrl=imageObj.previewUrl || imageObj.imageUrl;
+            return imageObj;
+        })
+        
         res.status(200).json({ 
-            resources:images,
+            resources:mapping,
             page,
             total,
             totalPages:Math.ceil(total/limit)
@@ -98,9 +111,17 @@ export const downloadImage = async (req, res) => {
 
 
 export const uploadImageData=async (req,res)=>{
-    const { title, imageUrl, price, isPremium, tags, discountPercentage, publicId }=req.body;
     try{
-        const newImage=new ImageModel({ title, imageUrl, price, isPremium, tags, discountPercentage, publicId });
+        const { title, imageUrl, price, isPremium, tags, discountPercentage, publicId }=req.body;
+        const cloudName=process.env.CLOUD_NAME;
+        let previewUrl=imageUrl;
+
+        if(publicId && cloudName){
+            const ext=(imageUrl || '').split('.').pop().split('?')[0];
+            previewUrl=`https://res.cloudinary.com/${cloudName}/image/upload/w_800,c_limit/${publicId}.${ext}`;
+        }
+
+        const newImage=new ImageModel({ title, previewUrl, imageUrl, price, isPremium, tags, discountPercentage, publicId });
         await newImage.save();
         return res.status(200).json({ message:"Image Uploaded Successfully!" });
     }

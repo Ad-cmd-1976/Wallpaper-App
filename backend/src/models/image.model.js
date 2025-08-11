@@ -11,6 +11,9 @@ const ImageSchema=new mongoose.Schema({
         min:0,
         default:0
     },
+    previewUrl:{
+        type:String
+    },
     imageUrl:{
         type:String,
         required:true
