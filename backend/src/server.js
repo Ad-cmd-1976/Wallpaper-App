@@ -13,7 +13,7 @@ const app=express()
 const port=process.env.PORT || 8080;
 
 app.use(cors({
-    origin:["http://localhost:5173", "https://wallpaper-app-git-ab0dd4-aditya-vishwakarmas-projects-9f4d81c8.vercel.app/"],
+    origin:["https://wallpaper-app-git-ab0dd4-aditya-vishwakarmas-projects-9f4d81c8.vercel.app"],
     credentials:true
 }));
 app.use(express.json());
