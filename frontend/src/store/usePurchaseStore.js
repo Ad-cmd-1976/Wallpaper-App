@@ -8,7 +8,6 @@ export const usePurchaseStore=create((set, get)=>({
     getPurchaseIds:async ()=>{
         try{
             const response=await axios.get('/purchase/list');
-            console.log(response);
             set({ purchaseIds:response.data.purchaseIds });
         }
         catch(error){

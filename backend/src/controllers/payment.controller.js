@@ -5,7 +5,7 @@ import crypto from 'crypto';
 import PurchaseModel from '../models/purchase.model.js';
 import UserModel from '../models/user.model.js';
 
-dotenv.config({});
+dotenv.config();
 
 const razorpay=new Razorpay({
     key_id:process.env.RAZORPAY_KEY_ID,

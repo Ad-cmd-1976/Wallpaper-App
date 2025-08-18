@@ -103,31 +103,61 @@ export const useImageStore=create((set, get)=>({
         
         try {
             if(!image || !imageData.title) return toast.error("Image and title are required!");
-            const formData = new FormData();
-            formData.append("file", image);
-            formData.append("upload_preset", "wallpaper_upload");
-            formData.append("folder", "wallpapers");
-            let updatedData={};
-            try{
-                const res = await axios.post(`https://api.cloudinary.com/v1_1/djtrvpcnf/image/upload`, formData, {
-                    withCredentials:false
-                });
-                updatedData={
-                    ...imageData,
-                    imageUrl:res.data.secure_url,
-                    publicId:res.data.public_id,
-                    tags:imageData.tags.split(",").map(tag => tag.trim()).filter(Boolean)
+            
+            if(imageData.isPremium){
+                try{
+                    const formData=new FormData();
+                    formData.append('file', image);
+                    formData.append('title', imageData.title);
+                    formData.append('tags', imageData.tags.split(",").map(tag => tag.trim()).filter(Boolean));
+                    formData.append('price', imageData.price);
+                    formData.append('discountPercentage', imageData.discountPercentage);
+                    formData.append('isPremium', imageData.isPremium);
+                    
+                    const res=await axios.post('/images/plus-upload', formData, { withCredentials:true });
+                    toast.success(res.data.message);
+                }
+                catch(error){
+                    console.log("Error in uploading plus image", error);
                 }
             }
-            catch(error){
-                console.error("Cloudinary upload failed:", error);
+            else{
+                try{
+                    const publicId=null;
+                    const updatedData={};
+                    const cloudName='djtrvpcnf';
+                    const formData = new FormData();
+                    formData.append("file", image);
+                    formData.append("upload_preset", "wallpaper_upload");
+                    formData.append("folder", "wallpapers");
+                    try{
+                        const res = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, formData, {
+                            withCredentials:false
+                        });
+                        publicId=res.data.public_id;
+                        const imageUrl=res.data.secure_url;
+                        updatedData={
+                            ...imageData,
+                            imageUrl,
+                            previewUrl:imageUrl,
+                            publicId,
+                            tags:imageData.tags.split(",").map(tag => tag.trim()).filter(Boolean)
+                        }
+                    }
+                    catch(error){
+                        console.error("Cloudinary upload failed:", error);
+                    }
+                    const res=await axios.post('/images/upload', updatedData, { withCredentials:true });
+                    toast.success(res.data.message);
+                }
+                catch(error){
+                    console.log("Error in uploadImage function from useImageStore", error);
+                }
             }
-            const res=await axios.post('/images/upload', updatedData);
-            toast.success(res.data.message);
-        } 
-        catch (error) {
-            console.log("Error in handle upload:", error);
         }
+        catch(error){
+            console.log("Error in uploadImage function of useImageStore", error);
+        }   
         finally{
             set({ isLoading:false });
         }

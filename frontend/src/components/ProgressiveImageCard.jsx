@@ -8,24 +8,23 @@ const ProgressiveImageCard = ({ image, user, purchaseIds, downloadImage, buyImag
 
   useEffect(() => {
     const img = new Image();
-    img.src = image.imageUrl;
+    img.src = image.previewUrl;
     img.onload = () => {
-      setSrc(image.imageUrl);
+      setSrc(image.previewUrl);
       setIsLoaded(true);
       setIsLandscape(img.width >= img.height);
     };
   }, [image.imageUrl]);
 
-  // Dynamic card size classes
   const aspectClass = isLandscape
-    ? "aspect-[16/9]" // Landscape
-    : "aspect-[9/16]"; // Portrait
+    ? "aspect-[16/9]" 
+    : "aspect-[9/16]"; 
 
   return (
     <div
       className={`relative group overflow-hidden rounded-xl shadow-lg border border-gray-800 bg-black/10 backdrop-blur-sm ${aspectClass}`}
     >
-      {/* Image */}
+
       <img
         src={src}
         alt={image.title || "Image"}
@@ -34,17 +33,17 @@ const ProgressiveImageCard = ({ image, user, purchaseIds, downloadImage, buyImag
         }`}
       />
 
-      {/* Overlay */}
+      
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300" />
 
-      {/* Title */}
+    
       {image.title && (
         <div className="absolute bottom-3 left-3 text-white text-sm sm:text-base font-medium drop-shadow-lg">
           {image.title}
         </div>
       )}
 
-      {/* Download Button */}
+      
       {((user && image.isPremium && purchaseIds.includes(image._id)) || !image.isPremium) ? (
         <button
           onClick={() => downloadImage(image.publicId)}
@@ -57,12 +56,12 @@ const ProgressiveImageCard = ({ image, user, purchaseIds, downloadImage, buyImag
         </button>
       ) : (
         <div className="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 flex flex-col items-end gap-2">
-          {/* Locked Icon */}
+        
           <div className="bg-white/10 border border-white/30 backdrop-blur-md p-3 rounded-full cursor-not-allowed shadow-lg">
             <Lock className="w-6 h-6 text-white" />
           </div>
 
-          {/* Buy Button */}
+          
           <button
             onClick={() => buyImage(image._id)}
             className="bg-gradient-to-tr from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 shadow-lg hover:shadow-xl text-white font-medium

@@ -1,4 +1,5 @@
 import https from 'https';
+import cloudinary from '../lib/cloudinary.js';
 import ImageModel from '../models/image.model.js';
 
 export const getImages=async (req,res)=>{
@@ -7,17 +8,11 @@ export const getImages=async (req,res)=>{
         const limit=parseInt(req.query.limit) || 10;
         const skip=(page-1)*limit;
 
-        const images=await ImageModel.find().sort({ createdAt:-1 }).skip(skip).limit(limit);
+        const images=await ImageModel.find({}, { imageUrl:0 }).sort({ createdAt:-1 }).skip(skip).limit(limit);
         const total=await ImageModel.countDocuments();
-
-        const mapping=images.map((image)=>{
-            let imageObj=image.toObject();
-            imageObj.imageUrl=imageObj.previewUrl || imageObj.imageUrl;
-            return imageObj;
-        })
         
         return res.json({
-            images:mapping,
+            images,
             total,
             page,
             totalPages:Math.ceil(total/limit)
@@ -46,18 +41,12 @@ export const searchImages=async (req,res)=>{
                 { title: { $in: regexes }},
                 { tags: { $in: regexes }}
             ]
-        }).sort({ createdAt:-1 }).skip(skip).limit(limit);
+        }, { imageUrl:0 }).sort({ createdAt:-1 }).skip(skip).limit(limit);
         
         const total=await ImageModel.countDocuments();
         
-        const mapping=images.map((image)=>{
-            let imageObj=image.toObject();
-            imageObj.imageUrl=imageObj.previewUrl || imageObj.imageUrl;
-            return imageObj;
-        })
-        
         res.status(200).json({ 
-            resources:mapping,
+            resources:images,
             page,
             total,
             totalPages:Math.ceil(total/limit)
@@ -112,14 +101,7 @@ export const downloadImage = async (req, res) => {
 
 export const uploadImageData=async (req,res)=>{
     try{
-        const { title, imageUrl, price, isPremium, tags, discountPercentage, publicId }=req.body;
-        const cloudName=process.env.CLOUD_NAME;
-        let previewUrl=imageUrl;
-
-        if(publicId && cloudName){
-            const ext=(imageUrl || '').split('.').pop().split('?')[0];
-            previewUrl=`https://res.cloudinary.com/${cloudName}/image/upload/w_800,c_limit/${publicId}.${ext}`;
-        }
+        const { title, previewUrl, imageUrl, price, isPremium, tags, discountPercentage, publicId }=req.body;
 
         const newImage=new ImageModel({ title, previewUrl, imageUrl, price, isPremium, tags, discountPercentage, publicId });
         await newImage.save();
@@ -128,5 +110,79 @@ export const uploadImageData=async (req,res)=>{
     catch(error){
         console.log("Error in uploadImage function of image controller",error);
         return res.status(500).json({ message:"Internal Server Error!" });
+    }
+}
+
+export const uploadPlusImageData=async (req,res)=>{
+    try{
+        const { title, file, tags, price, discountPercentage, isPremium }=req.body;
+
+        const previewTransformation = {
+            width: 800,                // Reduce resolution aggressively
+            height: 600,               // Fixed height for consistency
+            crop: "fill",              // Ensures exact size by cropping
+            quality: "30",             // Strong compression
+            fetch_format: "auto",      // Auto best format (WebP, AVIF, JPEG)
+            effect: "blur:200",        // Strong blur
+            flags: "lossy",            // Extra compression artifact
+            overlay: {
+                font_family: "Arial",
+                font_size: 40,
+                font_weight: "bold",
+                text: "PREVIEW   PREVIEW   PREVIEW", // Repeated text for tiled look
+            },
+            gravity: "center",         // Position watermark centrally
+            opacity: 50,               // Slight transparency
+            color: "#ffffff",          // White watermark text
+            // To make the watermark repeated, we can duplicate with Cloudinary layers if needed
+        };
+
+        const uploadOpts = {
+            folder: "wallpapers/premium",
+            resource_type: "image",
+            eager: [previewTransformation], // Generate preview eagerly
+            eager_async: false,             // Return preview URL immediately
+            use_filename: true,
+            unique_filename: true,
+            overwrite: false,
+            context: {
+                caption: title,
+                alt: title,
+            },
+        };
+
+        const response=await new Promise((resolve,reject)=>{
+            const stream=cloudinary.uploader.upload_stream(uploadOpts, (err, resData)=>{
+                if(err) return reject(err);
+                resolve(resData);
+            });
+            stream.end(req.file.buffer);
+        });
+
+        const publicId=response.public_id;
+        const imageUrl=response.secure_url;
+        const previewUrl=response.eager?.[0]?.secure_url || cloudinary.url(publicId, { 
+            secure:true, 
+            transformation:[previewTransformation]
+        });
+
+        const newImage=new ImageModel({
+            title,
+            price,
+            tags,
+            discountPercentage,
+            isPremium,
+            imageUrl,
+            previewUrl,
+            publicId
+        });
+
+        await newImage.save();
+
+        return res.status(200).json({ message:"Premium Image Upload Success!" });
+    }
+    catch(error){
+        console.log("Error in uploadPlusImageData function from image controller", error);
+        res.status(500).json({ message:"Internal Server Error!" });
     }
 }

@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import UserModel from '../models/user.model.js';
 import dotenv from 'dotenv';
+import multer from 'multer';
 
 dotenv.config();
 
@@ -25,6 +26,15 @@ export const protectedRoute=async (req, res, next)=>{
         return res.status(500).json({ message:"Internal Server Error!" });
     }
 }
+
+const storage=multer.memoryStorage();
+
+export const uploadMemory=multer({
+    storage,
+    limits:{
+        fileSize: 60*1024*1024
+    }
+})
 
 export const adminRoute=(req, res, next)=>{
     if(req.user && req.user.role=="admin") return next();

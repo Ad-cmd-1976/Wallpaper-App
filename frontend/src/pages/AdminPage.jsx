@@ -11,6 +11,7 @@ const AdminPage = () => {
     const [imageData, setimageData] = useState({
       title: '',
       imageUrl: '',
+      previewUrl:'',
       price: 0,
       publicId:'',
       tags: '',
@@ -21,7 +22,7 @@ const AdminPage = () => {
     const handleUpload = async (e) => {
       e.preventDefault();
       await uploadImage(selectedFile,imageData);
-      setimageData({ title:'', price:0, tags:'', discountPercentage:0, isPremium:false, imageUrl:'', publicId:'' });
+      setimageData({ title:'', price:0, tags:'', discountPercentage:0, isPremium:false, imageUrl:'', publicId:'', previewUrl:'' });
       setselectedFile(null);
     };
 
