@@ -13,7 +13,7 @@ const app=express()
 const port=process.env.PORT || 8080;
 
 app.use(cors({
-    origin:["https://wallpaper-8h77y9ora-aditya-vishwakarmas-projects-9f4d81c8.vercel.app/"],
+    origin:["https://wallpaper-8h77y9ora-aditya-vishwakarmas-projects-9f4d81c8.vercel.app"],
     credentials:true
 }));
 app.use(express.json());
