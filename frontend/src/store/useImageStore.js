@@ -129,8 +129,8 @@ export const useImageStore=create((set, get)=>({
                     formData.append("upload_preset", "wallpaper_upload");
                     formData.append("folder", "wallpapers");
                     try{
-                        const publicId=null;
-                        const updatedData={};
+                        let publicId=null;
+                        let updatedData={};
                         const res = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, formData, {
                             withCredentials:false
                         });
