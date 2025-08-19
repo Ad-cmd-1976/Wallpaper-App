@@ -21,12 +21,14 @@ const setCookies=(res,accessToken,refreshToken)=>{
         httpOnly:true,
         secure:process.env.NODE_ENV==="production",
         sameSite:"None",
+        path:"/",
         maxAge:15*60*60*1000
     });
     res.cookie("refreshToken",refreshToken,{
         httpOnly:true,
         secure:process.env.NODE_ENV==="production",
         sameSite:"None",
+        path:"/",
         maxAge:7*24*60*60*1000
     })
 }
