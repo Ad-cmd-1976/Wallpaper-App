@@ -17,17 +17,18 @@ const storeRefreshToken=async (userId,refreshToken)=>{
 }
 
 const setCookies=(res,accessToken,refreshToken)=>{
+    const isProduction=process.env.NODE_ENV==="production";
     res.cookie("accessToken",accessToken,{
         httpOnly:true,
-        secure:process.env.NODE_ENV==="production",
-        sameSite:"None",
+        secure: isProduction,
+        sameSite: isProduction ? "None": "Lax",
         path:"/",
-        maxAge:15*60*60*1000
+        maxAge:15*60*1000
     });
     res.cookie("refreshToken",refreshToken,{
         httpOnly:true,
-        secure:process.env.NODE_ENV==="production",
-        sameSite:"None",
+        secure:isProduction,
+        sameSite:isProduction ? "None": "Lax",
         path:"/",
         maxAge:7*24*60*60*1000
     })
@@ -115,8 +116,18 @@ export const logout=async (req,res)=>{
             const decoded=jwt.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET);
             await TokenModel.findOneAndDelete({ userId:decoded.userId });
         }
-        res.clearCookie("accessToken");
-        res.clearCookie("refreshToken");
+        res.clearCookie("accessToken",{
+            httpOnly:true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+            path: "/"
+        });
+        res.clearCookie("refreshToken", {
+            httpOnly:true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+            path: "/"
+        });
         res.status(201).json({ message:"Logged Out Successfully!" });
     }
     catch(error){
