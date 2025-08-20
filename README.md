@@ -4,7 +4,7 @@
   <a href="https://wallpaper-app-topaz.vercel.app/" target="_blank">
     <img src="https://img.shields.io/badge/Live%20Demo-3393FF?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
   </a>
-  <a href="https://github.com/Ad-cmd-1976/FreePixz" target="_blank">
+  <a href="https://github.com/Ad-cmd-1976/Wallpaper_App" target="_blank">
     <img src="https://img.shields.io/badge/View%20Code-181717?style=for-the-badge&logo=github&logoColor=white" alt="View Code" />
   </a>
 </p>  
