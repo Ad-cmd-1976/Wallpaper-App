@@ -9,9 +9,11 @@ import SignupPage from './pages/SignupPage.jsx'
 import AdminPage from './pages/AdminPage.jsx';
 import { useAuthStore } from './store/useAuthStore.js'
 import './App.css'
+import { useThemeStore } from './store/useThemeStore.js';
 
 function App() {
   const { user, checkAuth, checkingAuth }=useAuthStore();
+  const { theme }=useThemeStore();
 
   useEffect(()=>{
     checkAuth();
@@ -20,9 +22,9 @@ function App() {
   if(checkingAuth && !user) return (<LoadingSpinner/>)
 
   return (
-    <div>
+    <div className={`${theme?"bg-white text-gray-400":"bg-black text-white"} min-h-full`}>
       <Navbar/>
-      <div className='pt-16'>
+      <div className='pt-16 min-h-screen'>
         <Routes>
           <Route path='/' element={<HomePage/>}></Route>
           <Route path='/login' element={!user?<LoginPage/>:<Navigate to='/' />}></Route>

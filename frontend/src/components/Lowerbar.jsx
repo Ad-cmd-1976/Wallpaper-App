@@ -24,7 +24,7 @@ const Lowerbar = () => {
   }
   
   return (
-    <div className={`${theme ? "text-gray-400" : "bg-black text-white"} flex-col p-3 border-2 border-red-600 h-[5%]`}>
+    <div className={`${theme ? "text-gray-400" : "bg-black text-white"} flex-col p-3`}>
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center justify-center gap-2 w-full px-4 pb-4">
           <div className={`flex items-center bg-white rounded-2xl w-full sm:w-[75%] px-2 py-1 border-2 ${theme?"border-gray-300": "border-white"}`}>
             <Search color={theme ? "gray" : "black"} />

@@ -20,7 +20,7 @@ const Landingpage = () => {
   if (isLoading) return <LoadingSpinner />;
 
   return (
-    <div className={`${theme ? "text-gray-400" : "bg-black text-white"} border-2 border-violet-700 min-h-full px-14 pt-10`}>
+    <div className={`${theme ? "text-gray-400" : "bg-black text-white"} min-h-full px-14 pt-5`}>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
         {imageList.map((image) => (
           <ProgressiveImageCard
@@ -36,7 +36,7 @@ const Landingpage = () => {
 
       <div id='footer' className='flex justify-center my-2'>
         <button
-          className='bg-blue-700 p-2 rounded-lg hover:bg-blue-600'
+          className='bg-blue-700 p-2 rounded-lg hover:bg-blue-600 mb-2'
           disabled={isLoading}
           onClick={() => getImages(page + 1)}
         >

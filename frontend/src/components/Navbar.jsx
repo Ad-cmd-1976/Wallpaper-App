@@ -40,7 +40,7 @@ const Navbar = () => {
 
   return (
     <div
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${bgShade} ${textShade} backdrop-blur-md border-2 border-green-500`}
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${bgShade} ${textShade} backdrop-blur-md`}
     >
       <div className="flex flex-wrap justify-between p-4">
         <div className="flex items-center">
