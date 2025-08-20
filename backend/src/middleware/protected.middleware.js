@@ -36,6 +36,24 @@ export const uploadMemory=multer({
     }
 })
 
+export const checkSubscription=async (req, res, next)=>{
+    try{
+        const userId=req.user.id;
+        const user=await UserModel.findById(userId);
+
+        if((user.subscription==="yes" && user.subscriptionExpiresAt<new Date()) || user.subscription==="no") return next();
+
+        return res.json({
+            success:false,
+            message:`Your subscription expires At ${user.subscriptionExpiresAt}`
+        })
+    }
+    catch(error){
+        console.log("Error in checkSubscription middleware:", error);
+        res.status(500).json({ message:"Internal Server Error!" });
+    }
+}
+
 export const adminRoute=(req, res, next)=>{
     if(req.user && req.user.role=="admin") return next();
     return res.status(403).json({ message:"Access Denied - Admins Only!" })

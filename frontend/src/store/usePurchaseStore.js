@@ -7,7 +7,7 @@ export const usePurchaseStore=create((set, get)=>({
 
     getPurchaseIds:async ()=>{
         try{
-            const response=await axios.get('/purchase/list');
+            const response=await axios.get('/images/list');
             set({ purchaseIds:response.data.purchaseIds });
         }
         catch(error){
@@ -20,9 +20,9 @@ export const usePurchaseStore=create((set, get)=>({
             const res=await axios.post('/payment/order/plus-user', {}, {
                 withCredentials: true
             });
-            console.log(res);
 
             const data=res.data;
+            if(data.success==false) return toast.error(data.message);
 
             const options={
                 amount: data.amount,

@@ -47,7 +47,10 @@ export const verifyPlusUser=async (req,res)=>{
 
         if(expectedSignature!==razorpay_signature) return res.status(400).json({ message:"Invalid Signature!" });
 
-        await UserModel.findByIdAndUpdate(req.user._id, { subscription: "yes" });
+        const expiryDate=new Date();
+        expiryDate.setDate(expiryDate.getDate()+15);
+
+        await UserModel.findByIdAndUpdate(req.user._id, { subscription: "yes", subscriptionExpiresAt: expiryDate });
 
         return res.status(200).json({ message:"Welcome V.I.P!", success: true });
     }

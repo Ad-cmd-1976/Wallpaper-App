@@ -1,6 +1,7 @@
 import https from 'https';
 import cloudinary from '../lib/cloudinary.js';
 import ImageModel from '../models/image.model.js';
+import PurchaseModel from '../models/purchase.model.js';
 
 export const getImages=async (req,res)=>{
     try{
@@ -55,6 +56,21 @@ export const searchImages=async (req,res)=>{
     catch(error){
         res.status(500).json({ message:'Internal Server Error!' });
         console.log("Error in image controller searchImages function",error.message);
+    }
+}
+
+export const getPurchasedList=async (req,res)=>{
+    try{
+        const userId=req.user._id;
+        
+        const purchases=await PurchaseModel.find({ userId }).select("imageId");
+        const purchaseIds=purchases.map((purchase)=>purchase.imageId.toString());
+
+        return res.status(200).json({ purchaseIds });
+    }
+    catch(error){
+        console.log("Error in getPurchasedList function in purchase controller",error);
+        return res.status(500).json({ message:"Internal Server Error" });
     }
 }
 
@@ -118,30 +134,29 @@ export const uploadPlusImageData=async (req,res)=>{
         const { title, file, tags, price, discountPercentage, isPremium }=req.body;
 
         const previewTransformation = {
-            width: 800,                // Reduce resolution aggressively
-            height: 600,               // Fixed height for consistency
-            crop: "fill",              // Ensures exact size by cropping
-            quality: "30",             // Strong compression
-            fetch_format: "auto",      // Auto best format (WebP, AVIF, JPEG)
-            effect: "blur:200",        // Strong blur
-            flags: "lossy",            // Extra compression artifact
+            width: 800,                
+            height: 600,               
+            crop: "fill",             
+            quality: "30",             
+            fetch_format: "auto",      
+            effect: "blur:200",        
+            flags: "lossy",            
             overlay: {
                 font_family: "Arial",
                 font_size: 40,
                 font_weight: "bold",
-                text: "PREVIEW   PREVIEW   PREVIEW", // Repeated text for tiled look
+                text: "PREVIEW   PREVIEW   PREVIEW", 
             },
-            gravity: "center",         // Position watermark centrally
-            opacity: 50,               // Slight transparency
-            color: "#ffffff",          // White watermark text
-            // To make the watermark repeated, we can duplicate with Cloudinary layers if needed
+            gravity: "center",         
+            opacity: 50,              
+            color: "#ffffff",          
         };
 
         const uploadOpts = {
             folder: "wallpapers/premium",
             resource_type: "image",
-            eager: [previewTransformation], // Generate preview eagerly
-            eager_async: false,             // Return preview URL immediately
+            eager: [previewTransformation], 
+            eager_async: false,             
             use_filename: true,
             unique_filename: true,
             overwrite: false,

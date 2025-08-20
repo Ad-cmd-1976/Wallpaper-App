@@ -22,12 +22,14 @@ function App() {
   return (
     <div>
       <Navbar/>
-      <Routes>
-        <Route path='/' element={<HomePage/>}></Route>
-        <Route path='/login' element={!user?<LoginPage/>:<Navigate to='/' />}></Route>
-        <Route path='/signup' element={!user?<SignupPage/>:<Navigate to='/' />}></Route>
-        <Route path='/admin-dashboard' element={user?.role==="admin" ? <AdminPage/> : <Navigate to='/'/>}></Route>
-      </Routes>
+      <div className='pt-16'>
+        <Routes>
+          <Route path='/' element={<HomePage/>}></Route>
+          <Route path='/login' element={!user?<LoginPage/>:<Navigate to='/' />}></Route>
+          <Route path='/signup' element={!user?<SignupPage/>:<Navigate to='/' />}></Route>
+          <Route path='/admin-dashboard' element={user?.role==="admin" ? <AdminPage/> : <Navigate to='/'/>}></Route>
+        </Routes>
+      </div>
       <Toaster />
     </div>
   )
