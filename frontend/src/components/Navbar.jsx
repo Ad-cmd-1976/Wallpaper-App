@@ -34,7 +34,7 @@ const Navbar = () => {
 
   const bgShade = theme
     ? (isScrolled ? "bg-white/60" : "bg-white/85")
-    : (isScrolled ? "bg-black/60" : "bg-black/85");
+    : (isScrolled ? "bg-black/60" : "bg-black");
 
   const textShade = theme ? "text-gray-900" : "text-white";
 
