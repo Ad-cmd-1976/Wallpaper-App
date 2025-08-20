@@ -59,7 +59,6 @@ cd Wallpaper-App
 
 # 3. Create a .env file in the backend directory.
     # Add the following environment variables:
-
         PORT=8080
         MONGO_URI=your_mongodb_uri
 
@@ -69,6 +68,9 @@ cd Wallpaper-App
         CLOUDINARY_CLOUD_NAME=your_cloudinary_name
         CLOUDINARY_API_KEY=your_cloudinary_api
         CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+
+        RAZORPAY_KEY_ID=your_razorpay_key_id
+        RAZORPAY_KEY_SECRET=your_razorpay_key_secret
 
 # 4. Run the application
     # Start the backend
