@@ -23,9 +23,9 @@ const Navbar = () => {
   }, []);
 
   const changeTheme = (t) => {
-    setAnimateTheme(true); // trigger animation
+    setAnimateTheme(true); 
     setTheme(!t);
-    setTimeout(() => setAnimateTheme(false), 500); // reset after animation
+    setTimeout(() => setAnimateTheme(false), 500); 
   };
 
   const handleLogout = async () => {
