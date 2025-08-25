@@ -5,6 +5,7 @@ import LoadingSpinner from './LoadingSpinner';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { usePurchaseStore } from '../store/usePurchaseStore.js';
 import ProgressiveImageCard from './ProgressiveImageCard.jsx';
+import ComingSoon from './ComingSoon.jsx';
 
 const Landingpage = () => {
   const { imageList, getImages, isLoading, downloadImage, page } = useImageStore();
@@ -21,7 +22,9 @@ const Landingpage = () => {
 
   return (
     <div className={`${theme ? "text-gray-400" : "bg-black text-white"} min-h-full px-14 pt-5`}>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+      {imageList.length>0 && (
+        <>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
         {imageList.map((image) => (
           <ProgressiveImageCard
             key={image._id}
@@ -43,6 +46,9 @@ const Landingpage = () => {
           Load More
         </button>
       </div>
+      </>
+      )}
+      { imageList.length===0 && ( <ComingSoon/> )}
     </div>
   );
 };

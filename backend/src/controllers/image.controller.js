@@ -133,24 +133,12 @@ export const uploadPlusImageData=async (req,res)=>{
     try{
         const { title, file, tags, price, discountPercentage, isPremium }=req.body;
 
-        const previewTransformation = {
-            width: 800,                
-            height: 600,               
-            crop: "fill",             
-            quality: "30",             
-            fetch_format: "auto",      
-            effect: "blur:200",        
-            flags: "lossy",            
-            overlay: {
-                font_family: "Arial",
-                font_size: 40,
-                font_weight: "bold",
-                text: "PREVIEW   PREVIEW   PREVIEW", 
-            },
-            gravity: "center",         
-            opacity: 50,              
-            color: "#ffffff",          
-        };
+        const previewTransformation = [
+            {  quality: "20", fetch_format: "auto", effect: "blur:300", flags: "lossy" },
+            { overlay: { font_family: "Arial", font_size: 90, font_weight: "bold", text: "FREEPIXZ+", },
+                gravity: "center", opacity: 50, color: "#ffffff" },
+        ];
+
 
         const uploadOpts = {
             folder: "wallpapers/premium",
