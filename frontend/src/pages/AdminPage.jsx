@@ -30,7 +30,7 @@ const AdminPage = () => {
     <div 
       className={`flex justify-center gap-8 pt-7 sm:pt-11 min-h-screen min-w-full mx-auto ${theme?"bg-white text-gray-400":"bg-black text-white"} `}
     >
-  <div className='border-2 flex gap-10 flex-col items-center w-full'>
+  <div className='flex gap-10 flex-col items-center w-full'>
     <div className='flex flex-col gap-4 justify-center items-center w-full'>
       <motion.p 
       initial={{opacity:0,y:-20}}
