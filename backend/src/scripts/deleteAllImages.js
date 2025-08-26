@@ -1,11 +1,10 @@
 import cloudinary from "cloudinary";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import ImageModel from "../models/image.model.js"; // adjust path to your Image model
+import ImageModel from "../models/image.model.js";
 
 dotenv.config();
 
-// Cloudinary config
 cloudinary.v2.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.CLOUD_API_KEY,
