@@ -123,29 +123,26 @@ export const useImageStore=create((set, get)=>({
             }
             else{
                 try{
-                    const cloudName='djtrvpcnf';
-                    const formData = new FormData();
-                    formData.append("file", image);
-                    formData.append("upload_preset", "wallpaper_upload");
-                    formData.append("folder", "wallpapers");
                     let updatedData={};
                     try{
-                        let publicId=null;
-                        const res = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, formData, {
-                            withCredentials:false
-                        });
-                        publicId=res.data.public_id;
-                        const imageUrl=res.data.secure_url;
+                        const res=await axios.post('/images/pre-sign', {
+                            fileName: image.name,
+                            fileType: image.type
+                        }, { withCredentials: true});
+
+                        const { uploadUrl, fileUrl, publicId }=res.data;
+                        await axios.put(uploadUrl, image, { headers:{ "Content-Type" : image.type } });
+
                         updatedData={
                             ...imageData,
-                            imageUrl,
-                            previewUrl:imageUrl,
-                            publicId,
+                            imageUrl:fileUrl,
+                            previewUrl:fileUrl,
+                            publicId: publicId,
                             tags:imageData.tags.split(",").map(tag => tag.trim()).filter(Boolean)
                         }
                     }
                     catch(error){
-                        console.error("Cloudinary upload failed:", error);
+                        console.error("Aws upload failed:", error);
                     }
                     const res=await axios.post('/images/upload', updatedData, { withCredentials:true });
                     toast.success(res.data.message);
