@@ -171,16 +171,37 @@ export const uploadPlusImageData=async (req,res)=>{
         }
         await s3.send(new PutObjectCommand(originalParams));
 
-        const previewBuffer=await sharp(req.file.buffer).resize(1280).jpeg({ quality:30 }).composite([
+        const resizedBuffer=await sharp(req.file.buffer).resize(1280, null, { withoutEnlargement: true }).jpeg({ quality: 30 }).toBuffer();
+        const { width, height }=await sharp(resizedBuffer).metadata();
+        
+        const WATERMARK="FREEPIXZ+";
+        const fontSize=Math.round(Math.max(width,height)*0.03);
+        const tileW=Math.round(fontSize*9);
+        const tileH=Math.round(fontSize*6);
+        const opacity=0.15;
+
+
+        const svg = `
+            <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="wm" patternUnits="userSpaceOnUse" width="${tileW}" height="${tileH}">
+                <text
+                    x="${tileW/2}" y="${tileH/2}"
+                    text-anchor="middle" dominant-baseline="middle"
+                    font-family="Arial, Helvetica, sans-serif"
+                    font-size="${fontSize}"
+                    fill="#ffffff" fill-opacity="${opacity}">
+                    ${WATERMARK}
+                </text>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#wm)"/>
+            </svg>`;
+        const previewBuffer=await sharp(resizedBuffer).composite([
             {
-                input: Buffer.from(
-                    `<svg>
-                        <text x="50%" y="50%" font-size="60" fill="white" opacity="0.5" text-anchor="middle" dominant-baseline="middle">
-                            FREEPIXZ+
-                        </text>
-                    </svg>`
-                ),
-                gravity:"center"
+                input: Buffer.from(svg),
+                top: 0,
+                left: 0
             }
         ]).toBuffer();
 
