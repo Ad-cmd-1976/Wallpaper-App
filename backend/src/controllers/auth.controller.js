@@ -121,8 +121,12 @@ export const refreshToken=async (req,res)=>{
     try{
         const token=req.cookies.refreshToken;
         if(!token) return res.status(400).json({ message: "No refresh token found" });
-
-        const decoded=jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+        try{
+            const decoded=jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+        }
+        catch(error){
+            if(error.name==="TokenExpiredError") return res.status(403).json({ message:"Invalid or expired refresh token!" });
+        }
 
         const storedToken=await TokenModel.findOne({ userId: decoded.userId, refreshToken: refreshToken});
         if(!storedToken) return res.status(404).json({ message: "Refresh Token Not Found" });

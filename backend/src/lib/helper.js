@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import TokenModel from '../models/token.model.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
