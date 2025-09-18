@@ -9,7 +9,7 @@ export const useAuthStore=create((set,get)=>({
 
     signup:async({ name, email, password, confirmPassword})=>{
         set({ isloading:true });
-
+        
         if(password != confirmPassword){
             set({ isloading:false });
             return toast.error("Password not matched!");
