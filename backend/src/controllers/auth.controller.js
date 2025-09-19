@@ -1,6 +1,7 @@
 import UserModel from '../models/user.model.js';
 import TokenModel from '../models/token.model.js';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { generateTokens, setCookies, storeRefreshToken } from '../lib/helper.js';
 
 
@@ -119,15 +120,15 @@ export const getProfile=(req,res)=>{
 
 export const refreshToken=async (req,res)=>{
     try{
-        const token=req.cookies.refreshToken;
-        if(!token) return res.status(400).json({ message: "No refresh token found" });
+        const refreshToken=req.cookies.refreshToken;
+        if(!refreshToken) return res.status(400).json({ message: "Login to use services" });
+        let decoded;
         try{
-            const decoded=jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+            decoded=jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
         }
         catch(error){
             if(error.name==="TokenExpiredError") return res.status(403).json({ message:"Invalid or expired refresh token!" });
         }
-
         const storedToken=await TokenModel.findOne({ userId: decoded.userId, refreshToken: refreshToken});
         if(!storedToken) return res.status(404).json({ message: "Refresh Token Not Found" });
 
