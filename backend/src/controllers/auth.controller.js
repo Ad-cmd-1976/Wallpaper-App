@@ -2,37 +2,8 @@ import UserModel from '../models/user.model.js';
 import TokenModel from '../models/token.model.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
+import { generateTokens, setCookies, storeRefreshToken } from '../lib/helper.js';
 
-dotenv.config();
-
-const generateTokens=(userId)=>{
-    const accessToken=jwt.sign({userId},process.env.ACCESS_TOKEN_SECRET,{expiresIn:"15m"});
-    const refreshToken=jwt.sign({userId},process.env.REFRESH_TOKEN_SECRET,{expiresIn:"7d"});
-    return {accessToken,refreshToken};
-}
-
-const storeRefreshToken=async (userId,refreshToken)=>{
-    await TokenModel.create({userId:userId,refreshToken:refreshToken});
-}
-
-const setCookies=(res,accessToken,refreshToken)=>{
-    const isProduction=process.env.NODE_ENV==="production";
-    res.cookie("accessToken",accessToken,{
-        httpOnly:true,
-        secure: isProduction,
-        sameSite: isProduction ? "None": "Lax",
-        path:"/",
-        maxAge:15*60*1000
-    });
-    res.cookie("refreshToken",refreshToken,{
-        httpOnly:true,
-        secure:isProduction,
-        sameSite:isProduction ? "None": "Lax",
-        path:"/",
-        maxAge:7*24*60*60*1000
-    })
-}
 
 export const signup=async (req,res)=>{
     try{
@@ -80,6 +51,7 @@ export const signup=async (req,res)=>{
         res.status(500).json({message:'Internal Server Error',success:false});
     }
 }
+
 export const login=async (req,res)=>{
     try{
         const {email,password}=req.body;
@@ -143,5 +115,34 @@ export const getProfile=(req,res)=>{
     catch(error){
         console.log("Error in getProfile controller:",error.message);
         return res.status(500).json({ message:"internal Server Error!" });
+    }
+}
+
+export const refreshToken=async (req,res)=>{
+    try{
+        const refreshToken=req.cookies.refreshToken;
+        if(!refreshToken) return res.status(400).json({ message: "Login to use services" });
+        let decoded;
+        try{
+            decoded=jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+        }
+        catch(error){
+            if(error.name==="TokenExpiredError") return res.status(403).json({ message:"Invalid or expired refresh token!" });
+        }
+        const storedToken=await TokenModel.findOne({ userId: decoded.userId, refreshToken: refreshToken});
+        if(!storedToken) return res.status(404).json({ message: "Refresh Token Not Found" });
+
+        const { accessToken, refreshToken: newRefreshToken }=generateTokens(decoded.userId);
+        setCookies(res, accessToken, newRefreshToken);
+
+        await TokenModel.findOneAndUpdate({ 
+            userId: decoded.userId, refreshToken: refreshToken 
+        },{ refreshToken: newRefreshToken});
+
+        return res.json({ message: "Refresh Success!" });
+    }
+    catch(error){
+        console.log("Error in refreshToken function of auth controller:", error);
+        res.status(500).json({ message: "Internal Server Error!" });
     }
 }

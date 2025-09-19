@@ -8,16 +8,18 @@ dotenv.config();
 export const protectedRoute=async (req, res, next)=>{
     try{
         const accessToken=req.cookies.accessToken;
-        if(!accessToken)  return res.status(400).json({ message: "Login to use the services!" });
+        if(!accessToken)  return res.status(401).json({ message: "Login to use the services!" });
         try{
             const decoded=jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
             const user=await UserModel.findById(decoded.userId).select("-password");
-            if(!user) return res.status(401).json({ message:"User Not Found!"});
+            if(!user) return res.status(404).json({ message:"User Not Found!"});
             req.user=user;
             return next();
         }
         catch(error){
-            if(error.name==="TokenExpiredError") return res.status(401).json({ message:"Please login again from homepage!" });
+            if(error.name==="TokenExpiredError"){ 
+                return res.status(403).json({ message:"Please login again from homepage!" });
+            }
             throw error;
         }
     }

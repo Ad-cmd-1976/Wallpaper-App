@@ -1,5 +1,8 @@
 import https from 'https';
-import cloudinary from '../lib/cloudinary.js';
+import s3 from '../lib/aws.js';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import sharp from 'sharp';
 import ImageModel from '../models/image.model.js';
 import PurchaseModel from '../models/purchase.model.js';
 
@@ -89,7 +92,7 @@ export const downloadImage = async (req, res) => {
             imageRes.pipe(res);
 
             imageRes.on('error', (err) => {
-                console.error('Cloudinary stream error', err.message);
+                console.error('Aws stream error', err.message);
                 if(!res.headersSent) {
                     res.status(500).json({ message: "Failed to stream image" });
                 } 
@@ -114,6 +117,29 @@ export const downloadImage = async (req, res) => {
     }
 }
 
+export const getPresignedUrl=async (req,res)=>{
+    try{
+        const { fileName, fileType }=req.body;
+
+        const key=`wallpaper/${Date.now()}-${fileName}`;
+        const obj={
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: key,
+            ContentType: fileType
+        }
+        const command=new PutObjectCommand(obj);
+
+        const uploadUrl=await getSignedUrl(s3, command, { expiresIn: 60 });
+        const fileUrl=`https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+        const publicId=key;
+
+        return res.json({ uploadUrl, fileUrl, publicId });
+    }
+    catch(error){
+        console.log("Error in getPresigned function of image controller", error);
+        res.status(500).json({ message:"Internal Server Error!" });
+    }
+}
 
 export const uploadImageData=async (req,res)=>{
     try{
@@ -131,43 +157,64 @@ export const uploadImageData=async (req,res)=>{
 
 export const uploadPlusImageData=async (req,res)=>{
     try{
-        const { title, file, tags, price, discountPercentage, isPremium }=req.body;
+        const { title, tags, price, discountPercentage, isPremium }=req.body;
 
-        const previewTransformation = [
-            {  quality: "20", fetch_format: "auto", effect: "blur:300", flags: "lossy" },
-            { overlay: { font_family: "Arial", font_size: 90, font_weight: "bold", text: "FREEPIXZ+", },
-                gravity: "center", opacity: 50, color: "#ffffff" },
-        ];
+        const timestamp=Date.now();
+        const originalKey=`wallpaper/premium/${timestamp}-${req.file.originalname}`;
+        const previewKey=`wallpaper/premium/preview/${timestamp}-${req.file.originalname}`;
+
+        const originalParams={
+            Key: originalKey,
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Body: req.file.buffer,
+            ContentType: req.file.mimetype
+        }
+        await s3.send(new PutObjectCommand(originalParams));
+
+        const resizedBuffer=await sharp(req.file.buffer).resize(1280, null, { withoutEnlargement: true }).jpeg({ quality: 30 }).toBuffer();
+        const { width, height }=await sharp(resizedBuffer).metadata();
+        
+        const WATERMARK="FREEPIXZ+";
+        const fontSize=Math.round(Math.max(width,height)*0.03);
+        const tileW=Math.round(fontSize*9);
+        const tileH=Math.round(fontSize*6);
+        const opacity=0.15;
 
 
-        const uploadOpts = {
-            folder: "wallpapers/premium",
-            resource_type: "image",
-            eager: [previewTransformation], 
-            eager_async: false,             
-            use_filename: true,
-            unique_filename: true,
-            overwrite: false,
-            context: {
-                caption: title,
-                alt: title,
-            },
-        };
+        const svg = `
+            <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="wm" patternUnits="userSpaceOnUse" width="${tileW}" height="${tileH}">
+                <text
+                    x="${tileW/2}" y="${tileH/2}"
+                    text-anchor="middle" dominant-baseline="middle"
+                    font-family="Arial, Helvetica, sans-serif"
+                    font-size="${fontSize}"
+                    fill="#ffffff" fill-opacity="${opacity}">
+                    ${WATERMARK}
+                </text>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#wm)"/>
+            </svg>`;
+        const previewBuffer=await sharp(resizedBuffer).composite([
+            {
+                input: Buffer.from(svg),
+                top: 0,
+                left: 0
+            }
+        ]).toBuffer();
 
-        const response=await new Promise((resolve,reject)=>{
-            const stream=cloudinary.uploader.upload_stream(uploadOpts, (err, resData)=>{
-                if(err) return reject(err);
-                resolve(resData);
-            });
-            stream.end(req.file.buffer);
-        });
+        const previewParams={
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: previewKey,
+            Body: previewBuffer,
+            ContentType: "image/jpeg"
+        }
+        await s3.send(new PutObjectCommand(previewParams));
 
-        const publicId=response.public_id;
-        const imageUrl=response.secure_url;
-        const previewUrl=response.eager?.[0]?.secure_url || cloudinary.url(publicId, { 
-            secure:true, 
-            transformation:[previewTransformation]
-        });
+        const imageUrl=`https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${originalKey}`
+        const previewUrl=`https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${previewKey}`
 
         const newImage=new ImageModel({
             title,
@@ -177,7 +224,7 @@ export const uploadPlusImageData=async (req,res)=>{
             isPremium,
             imageUrl,
             previewUrl,
-            publicId
+            publicId: originalKey
         });
 
         await newImage.save();
