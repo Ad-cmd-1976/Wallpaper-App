@@ -29,5 +29,5 @@ export const setCookies=(res,accessToken,refreshToken)=>{
         sameSite:isProduction ? "None": "Lax",
         path:"/",
         maxAge:7*24*60*60*1000
-    })
+    });
 }

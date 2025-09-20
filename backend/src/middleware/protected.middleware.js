@@ -18,7 +18,7 @@ export const protectedRoute=async (req, res, next)=>{
         }
         catch(error){
             if(error.name==="TokenExpiredError"){ 
-                return res.status(403).json({ message:"Please login again from homepage!" });
+                return res.status(401).json({ message:"Please login again from homepage!" });
             }
             throw error;
         }
