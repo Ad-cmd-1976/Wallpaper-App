@@ -53,9 +53,12 @@ export const useImageStore=create((set, get)=>({
             params.append('limit', limit);
             const response=await axios.get('/images/search',{ params:params });
 
+            const newImages=response.data.resources;
+
             set((state)=>({
-                imageList: page===1 ? response.data.resources : [...state.imageList,...response.data.resources],
-                searchVal:searchVal
+                imageList: page===1 ? newImages : [...state.imageList,...newImages],
+                searchVal:searchVal,
+                hasMore: newImages.length>0
             }))
         }
         catch(error){
