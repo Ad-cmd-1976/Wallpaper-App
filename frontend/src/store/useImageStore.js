@@ -9,6 +9,7 @@ export const useImageStore=create((set, get)=>({
     page:1,
     limit:10,
     searchVal:'',
+    hasMore: true,
     setsearchVal:(val)=>set({ searchVal:val }),
 
     resetToHome:async ()=>{
@@ -27,9 +28,12 @@ export const useImageStore=create((set, get)=>({
             params.append("limit", get().limit);
             const response=await axios.get('/images/getImages', { params:params });
 
+            const newImages=response.data.images;
+
             set((state)=>({
-                imageList: page===1 ? response.data.images : [...state.imageList,...response.data.images],
-                page
+                imageList: page===1 ? newImages : [...state.imageList,...newImages],
+                page,
+                hasMore: newImages.length>0
             }))
         }
         catch(error){

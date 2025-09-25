@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useImageStore } from '../store/useImageStore.js';
 import { useThemeStore } from '../store/useThemeStore.js';
 import LoadingSpinner from './LoadingSpinner';
@@ -8,15 +8,40 @@ import ProgressiveImageCard from './ProgressiveImageCard.jsx';
 import ComingSoon from './ComingSoon.jsx';
 
 const Landingpage = () => {
-  const { imageList, getImages, isLoading, downloadImage, page } = useImageStore();
+  const { imageList, getImages, isLoading, downloadImage, page, hasMore } = useImageStore();
   const { purchaseIds, getPurchaseIds, buyImage } = usePurchaseStore();
   const { theme } = useThemeStore();
   const { user } = useAuthStore();
+
+  const loaderRef=useRef(null);
 
   useEffect(() => {
     getImages(1);
     if (user) getPurchaseIds();
   }, []);
+
+  useEffect(()=>{
+     const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (first.isIntersecting && !isLoading && hasMore) {
+          getImages(page + 1);
+        }
+      },
+      { threshold: 1 }
+    );
+
+    const currentLoader = loaderRef.current;
+    if (currentLoader) {
+      observer.observe(currentLoader);
+    }
+
+    return () => {
+      if (currentLoader) {
+        observer.unobserve(currentLoader);
+      }
+    };
+  }, [page, getImages, isLoading, hasMore]);
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -37,14 +62,8 @@ const Landingpage = () => {
         ))}
       </div>
 
-      <div id='footer' className='flex justify-center my-2'>
-        <button
-          className='bg-blue-700 p-2 rounded-lg hover:bg-blue-600 mb-2'
-          disabled={isLoading}
-          onClick={() => getImages(page + 1)}
-        >
-          Load More
-        </button>
+      <div ref={loaderRef} className='flex justify-center my-2'>
+        { isLoading && <LoadingSpinner/>}
       </div>
       </>
       )}

@@ -8,8 +8,8 @@ import LoginPage from './pages/LoginPage.jsx'
 import SignupPage from './pages/SignupPage.jsx'
 import AdminPage from './pages/AdminPage.jsx';
 import { useAuthStore } from './store/useAuthStore.js'
-import './App.css'
 import { useThemeStore } from './store/useThemeStore.js';
+import './App.css'
 
 function App() {
   const { user, checkAuth, checkingAuth }=useAuthStore();
