@@ -113,6 +113,8 @@ export const verifyPayment=async (req,res)=>{
            paymentId: razorpay_payment_id 
         });
 
+        await UserModel.findByIdAndUpdate(userId, { $addToSet: { purchasedWallpapers: imageId } });
+
         res.status(200).json({
             message: "Purchase Successfull & Download Unlocked",
             downloadReady: true,

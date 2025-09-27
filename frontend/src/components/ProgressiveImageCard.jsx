@@ -16,34 +16,45 @@ const ProgressiveImageCard = ({ image, user, purchaseIds, downloadImage, buyImag
     };
   }, [image.imageUrl]);
 
-  const aspectClass = isLandscape
-    ? "aspect-[16/9]" 
-    : "aspect-[9/16]"; 
+  const aspectClass = isLandscape ? 'aspect-[16/9]' : 'aspect-[9/16]';
+  const isPurchased=purchaseIds.includes(image._id);
+
+  const hasDiscount = image.discountPercentage > 0; 
+  const discountedPrice = hasDiscount
+    ? Math.round(image.price - (image.price * image.discountPercentage) / 100)
+    : null;
 
   return (
     <div
       className={`relative group overflow-hidden rounded-xl shadow-lg border border-gray-800 bg-black/10 backdrop-blur-sm ${aspectClass}`}
     >
-
       <img
         src={src}
-        alt={image.title || "Image"}
-        className={`w-full h-full object-cover cursor-pointer transition-transform duration-500 ease-out group-hover:scale-105 ${
-          !isLoaded ? 'blur-lg' : 'blur-0'
-        }`}
+        alt={image.title || 'Image'}
+        className={`w-full h-full object-cover cursor-pointer transition-transform duration-500 ease-out group-hover:scale-105 ${ !isLoaded ? 'blur-lg' : 'blur-0' }`}
       />
 
-      
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300" />
 
-    
+
+      {!isPurchased && hasDiscount && (
+        <div className="absolute top-3 left-3 bg-pink-600/90 text-white text-xs sm:text-sm font-semibold px-3 py-1 rounded-full shadow-md">
+          FreePixz+ {image.discountPercentage}% off for ₹ {discountedPrice}
+        </div>
+      )}
+
+      {!isPurchased && image.price > 0 && (
+        <div className="absolute top-3 right-3 bg-black/70 text-white text-xs sm:text-sm font-semibold px-3 py-1 rounded-full shadow-md">
+          ₹ {image.price}
+        </div>
+      )}
+
       {image.title && (
         <div className="absolute bottom-3 left-3 text-white text-sm sm:text-base font-medium drop-shadow-lg">
           {image.title}
         </div>
       )}
 
-      
       {((user && image.isPremium && purchaseIds.includes(image._id)) || !image.isPremium) ? (
         <button
           onClick={() => downloadImage(image.publicId)}
@@ -56,12 +67,10 @@ const ProgressiveImageCard = ({ image, user, purchaseIds, downloadImage, buyImag
         </button>
       ) : (
         <div className="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 flex flex-col items-end gap-2">
-        
           <div className="bg-white/10 border border-white/30 backdrop-blur-md p-3 rounded-full cursor-not-allowed shadow-lg">
             <Lock className="w-6 h-6 text-white" />
           </div>
 
-          
           <button
             onClick={() => buyImage(image._id)}
             className="bg-gradient-to-tr from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 shadow-lg hover:shadow-xl text-white font-medium
