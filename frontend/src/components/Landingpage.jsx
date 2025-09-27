@@ -6,6 +6,7 @@ import { useAuthStore } from '../store/useAuthStore.js';
 import { usePurchaseStore } from '../store/usePurchaseStore.js';
 import ProgressiveImageCard from './ProgressiveImageCard.jsx';
 import ComingSoon from './ComingSoon.jsx';
+import Masonry from 'react-masonry-css';
 
 const Landingpage = () => {
   const { imageList, getImages, isLoading, downloadImage, page, hasMore } = useImageStore();
@@ -14,6 +15,14 @@ const Landingpage = () => {
   const { user } = useAuthStore();
 
   const loaderRef=useRef(null);
+
+  const breakpointCols = {
+    default: 4,
+    1280: 4,
+    1024: 3,
+    768: 2,
+    640: 1,
+  };
 
   useEffect(() => {
     getImages(1);
@@ -47,9 +56,14 @@ const Landingpage = () => {
 
   return (
     <div className={`${theme ? "text-gray-400" : "bg-black text-white"} min-h-full px-14 pt-5`}>
+      <div className='max-w-[1400px] mx-auto px-1 pt-5'>
       {imageList.length>0 && (
         <>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+        <Masonry
+          breakpointCols={breakpointCols}
+          className='my-masonry-grid'
+          columnClassName='my-masonry-grid_column'
+        >
         {imageList.map((image) => (
           <ProgressiveImageCard
             key={image._id}
@@ -60,7 +74,7 @@ const Landingpage = () => {
             buyImage={buyImage}
           />
         ))}
-      </div>
+      </Masonry>
 
       <div ref={loaderRef} className='flex justify-center my-2'>
         { isLoading && <LoadingSpinner/>}
@@ -68,6 +82,7 @@ const Landingpage = () => {
       </>
       )}
       { imageList.length===0 && ( <ComingSoon/> )}
+    </div>
     </div>
   );
 };
