@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import SignupPage from './pages/SignupPage.jsx'
 import AdminPage from './pages/AdminPage.jsx';
+import AuthSuccessPage from './pages/AuthSuccessPage.jsx';
 import { useAuthStore } from './store/useAuthStore.js'
 import { useThemeStore } from './store/useThemeStore.js';
 import './App.css'
@@ -30,6 +31,7 @@ function App() {
           <Route path='/login' element={!user?<LoginPage/>:<Navigate to='/' />}></Route>
           <Route path='/signup' element={!user?<SignupPage/>:<Navigate to='/' />}></Route>
           <Route path='/admin-dashboard' element={user?.role==="admin" ? <AdminPage/> : <Navigate to='/'/>}></Route>
+          <Route path='/auth/success' element={<AuthSuccessPage/>}></Route>
         </Routes>
       </div>
       <Toaster />

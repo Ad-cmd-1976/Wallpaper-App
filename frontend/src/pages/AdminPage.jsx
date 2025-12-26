@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useImageStore } from '../store/useImageStore';
 import { motion } from 'framer-motion';
 import { useThemeStore } from '../store/useThemeStore';

@@ -53,6 +53,20 @@ export const useAuthStore=create((set,get)=>({
         }
     },
 
+    getGoogleUser: async ()=>{
+        try{
+            const res=await axios.post('/auth/me');
+            set({ user: res.data });
+            return true;
+
+        }
+        catch(error){
+            console.log("Failed to fetch user");
+            set({ user:null });
+            return false;
+        }
+    },
+
     checkAuth:async ()=>{
         set({ checkingAuth:true });
         try{

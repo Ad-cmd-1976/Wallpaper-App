@@ -1,10 +1,12 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.route.js';
 import imageRoutes from './routes/image.route.js';
 import paymentRoutes from './routes/payment.route.js';
+import googleRoutes from './routes/google.route.js';
 import { connectdb } from './lib/db.js';
 dotenv.config();
 
@@ -18,9 +20,11 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
+app.use(passport.initialize());
 
 
 app.use('/api/auth', authRoutes);
+app.use('/api/auth', googleRoutes);
 app.use('/api/images', imageRoutes);
 app.use('/api/payment', paymentRoutes);
 

@@ -4,6 +4,7 @@ import { Lock, User, Mail, Loader } from 'lucide-react';
 import {useThemeStore} from '../store/useThemeStore.js'
 import { useAuthStore } from '../store/useAuthStore.js'
 import { motion } from 'framer-motion';
+import { FcGoogle } from 'react-icons/fc';
 
 const SignupPage = () => {
   const {theme}=useThemeStore();
@@ -19,6 +20,10 @@ const SignupPage = () => {
   const handleSubmit=async (e)=>{
     e.preventDefault();
     signup(signInfo);
+  }
+
+  const handleGoogleLogin=async ()=>{
+    window.location.href=`http://localhost:8080/api/auth/google`;
   }
 
   return (
@@ -119,6 +124,21 @@ const SignupPage = () => {
                 }
               </button>
             </div>
+
+            <div className="flex items-center w-80 sm:w-96">
+                <hr className="flex-grow border-gray-300" />
+                <span className="px-2 text-sm">or</span>
+                <hr className="flex-grow border-gray-300" />
+            </div>
+
+            <button
+              onClick={handleGoogleLogin}
+              type="button"
+              className="flex items-center justify-center gap-2 border-2 border-gray-300 hover:bg-gray-100 transition-all ease-in-out rounded-lg w-80 sm:w-96 py-2 bg-white text-black font-medium shadow-md"
+            >
+              <FcGoogle className="size-5" />
+              Continue with Google
+            </button>
 
             <span className='text-center'>
               Don't have an account? {" "}
