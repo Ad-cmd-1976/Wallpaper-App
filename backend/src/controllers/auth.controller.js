@@ -1,8 +1,10 @@
 import UserModel from '../models/user.model.js';
 import TokenModel from '../models/token.model.js';
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { generateTokens, setCookies, storeRefreshToken } from '../lib/helper.js';
+import sendEmail from '../lib/sendEmail.js';
 
 
 export const signup=async (req,res)=>{
@@ -36,8 +38,8 @@ export const signup=async (req,res)=>{
         const {accessToken,refreshToken}=generateTokens(newUser._id);
         await storeRefreshToken(newUser._id,refreshToken);
         setCookies(res,accessToken,refreshToken);
-
-
+        
+        
         res.status(201).json({
             _id:newUser._id,
             name:newUser.name,
@@ -60,9 +62,9 @@ export const login=async (req,res)=>{
 
         const user=await UserModel.findOne({email});
         if(!user) return res.status(400).json({message:"Invalid User Credentials!"});
-        const isPasswordEqual=await bcrypt.compare(password,user.password);
+        const isPasswordEqual=bcrypt.compare(password,user.password);
         if(!isPasswordEqual) return res.status(400).json({ message:"Invalid User Credentials!" });
-
+        
         const {accessToken,refreshToken}=generateTokens(user._id);
         storeRefreshToken(user._id,refreshToken);
         setCookies(res,accessToken,refreshToken);
@@ -131,10 +133,10 @@ export const refreshToken=async (req,res)=>{
         }
         const storedToken=await TokenModel.findOne({ userId: decoded.userId, refreshToken: refreshToken});
         if(!storedToken) return res.status(404).json({ message: "Refresh Token Not Found" });
-
+        
         const { accessToken, refreshToken: newRefreshToken }=generateTokens(decoded.userId);
         setCookies(res, accessToken, newRefreshToken);
-
+        
         await TokenModel.findOneAndUpdate({ 
             userId: decoded.userId, refreshToken: refreshToken 
         },{ refreshToken: newRefreshToken});
@@ -143,6 +145,68 @@ export const refreshToken=async (req,res)=>{
     }
     catch(error){
         console.log("Error in refreshToken function of auth controller:", error);
+        res.status(500).json({ message: "Internal Server Error!" });
+    }
+}
+
+export const forgetPassword=async (req,res)=>{
+    try{
+        const { email }=req.body;
+        
+        const user=UserModel.findOne({ email });
+        if(!user) return res.status(200).json({ message: "If email exists, reset link is sent to it" });
+        
+        const resetToken=crypto.randomBytes(32).toString('hex');
+        
+        const hashedToken=crypto.createHash("sha256").update(resetToken).digest("hex");
+        
+        user.resetPasswordToken=hashedToken;
+        user.resetPasswordExpire=Date.now()+10*60*1000;
+        await user.save();
+        
+        const resetUrl=`${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+        
+        await sendEmail({
+            to: user.email,
+            subject: "Freepixz Account Password Reset",
+            html:`
+            <p>You Requeted a Password Reset</p>
+            <p>Click the link below (valid for 10 minutes):</p>
+            <a href="${resetUrl}">${resetUrl}</a>
+            `
+        });
+        
+        res.status(200).json({
+            message: "Reset Link Sent to Email"
+        });
+    }    
+    catch(error){
+        console.log("Error in forgetPassword function of auth controller:", error);
+        res.status(500).json({ message: "Internal Server Error!" });
+    }
+}
+
+export const resetPassword=async (req,res)=>{
+    try{
+        const { token }=req.params;
+        const { password }=req.body;
+        
+        const hashed=crypto.createHash("sha256").update(token).digest("hex");
+        
+        const user=UserModel.findOne({ resetPasswordToken: hashed, resetPasswordExpire: { $gt: Date.now() } });
+        
+        if(!user) return res.status(400).json({ message: "Invalid or Expired Token" });
+        
+        const salt=await bcrypt.genSalt(10);
+        user.password=await bcrypt.hash(password,salt);
+        user.resetPasswordToken=undefined;
+        user.resetPasswordExpire=undefined;
+        await newUser.save();
+        
+        res.status(200).json({ message: "Password Reset Successfull" });
+    }
+    catch(error){
+        console.log("Error in resetPassword function of auth controller:", error);
         res.status(500).json({ message: "Internal Server Error!" });
     }
 }
