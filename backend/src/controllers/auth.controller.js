@@ -21,14 +21,14 @@ export const signup=async (req,res)=>{
         if(password.length<6){
             return res.status(401).json({message:"Password should be atleast 6 characters long!"});
         }
-
-
+        
+        
         
         const user=await UserModel.findOne({email});
         if(user){
             return res.status(400).json({message:'User Already Exists',success:false});
         }
-
+        
         
         const newUser=new UserModel({name,email,password});
         const salt=await bcrypt.genSalt(10);
@@ -57,9 +57,9 @@ export const signup=async (req,res)=>{
 export const login=async (req,res)=>{
     try{
         const {email,password}=req.body;
-
+        
         if(!email || !password) return res.status(400).json({ message:"All fields Required!" });
-
+        
         const user=await UserModel.findOne({email});
         if(!user) return res.status(400).json({message:"Invalid User Credentials!"});
         const isPasswordEqual=bcrypt.compare(password,user.password);
@@ -68,7 +68,7 @@ export const login=async (req,res)=>{
         const {accessToken,refreshToken}=generateTokens(user._id);
         storeRefreshToken(user._id,refreshToken);
         setCookies(res,accessToken,refreshToken);
-
+        
         res.status(201).json({
             _id:user._id,
             name:user.name,
@@ -140,7 +140,7 @@ export const refreshToken=async (req,res)=>{
         await TokenModel.findOneAndUpdate({ 
             userId: decoded.userId, refreshToken: refreshToken 
         },{ refreshToken: newRefreshToken});
-
+        
         return res.json({ message: "Refresh Success!" });
     }
     catch(error){
@@ -153,16 +153,19 @@ export const forgetPassword=async (req,res)=>{
     try{
         const { email }=req.body;
         
-        const user=UserModel.findOne({ email });
+        if(!email) return res.status(401).json({ message:"Email is required!" });
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return res.status(400).json({ message: 'Invalid email address' });
+        }
+
+        const user=await UserModel.findOne({ email });
         if(!user) return res.status(200).json({ message: "If email exists, reset link is sent to it" });
         
         const resetToken=crypto.randomBytes(32).toString('hex');
         
         const hashedToken=crypto.createHash("sha256").update(resetToken).digest("hex");
         
-        user.resetPasswordToken=hashedToken;
-        user.resetPasswordExpire=Date.now()+10*60*1000;
-        await user.save();
+        await UserModel.findOneAndUpdate({ email }, { resetPasswordToken: hashedToken, resetPasswordExpire: Date.now()+10*60*1000 });
         
         const resetUrl=`${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
         

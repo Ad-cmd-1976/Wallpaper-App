@@ -79,5 +79,20 @@ export const useAuthStore=create((set,get)=>({
         finally{
             set({ checkingAuth:false });
         }
-    }
+    },
+
+    forgetPassword: async(email)=>{
+        console.log(email);
+        set({ isloading: true });
+        try{
+            const res=await axios.post('/auth/forget-password', { email });
+            console.log(res);
+        }
+        catch(error){
+            toast.error(error.response.data.message || "Failed to forget password");
+        }
+        finally{
+            set({ isloading: false });
+        }
+    },
 }))
