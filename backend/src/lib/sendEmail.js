@@ -11,6 +11,8 @@ const sendEmail= async ({ to, subject, html })=>{
         }
     });
 
+    await transporter.verify();
+
     await transporter.sendMail({
         from: process.env.EMAIL_FROM,
         to,
