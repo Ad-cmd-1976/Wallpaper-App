@@ -169,6 +169,7 @@ export const forgetPassword=async (req,res)=>{
         
         const resetUrl=`${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
         
+        console.log("➡️ Forget password request received");
         await sendEmail({
             to: user.email,
             subject: "Freepixz Account Password Reset",
@@ -178,6 +179,8 @@ export const forgetPassword=async (req,res)=>{
             <a href="${resetUrl}">${resetUrl}</a>
             `
         });
+        
+        console.log("✅ Email sent successfully");
         
         res.status(200).json({
             message: "Reset Link Sent to Email"

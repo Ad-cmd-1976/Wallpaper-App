@@ -8,7 +8,11 @@ const sendEmail= async ({ to, subject, html })=>{
         auth:{
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS
-        }
+        },
+
+        connectionTimeout: 10_000, 
+        greetingTimeout: 10_000,
+        socketTimeout: 10_000,
     });
 
     await transporter.verify();
