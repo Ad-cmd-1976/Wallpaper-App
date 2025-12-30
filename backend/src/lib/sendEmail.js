@@ -1,28 +1,25 @@
-import nodemailer from 'nodemailer';
+import axios from "axios";
 
-const sendEmail= async ({ to, subject, html })=>{
-    const transporter=nodemailer.createTransport({
-        port: Number(process.env.EMAIL_PORT),
-        host: process.env.EMAIL_HOST,
-        secure: false,
-        auth:{
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        },
-
-        connectionTimeout: 10_000, 
-        greetingTimeout: 10_000,
-        socketTimeout: 10_000,
-    });
-
-    await transporter.verify();
-
-    await transporter.sendMail({
-        from: process.env.EMAIL_FROM,
-        to,
-        subject,
-        html,
-    })
-}
+const sendEmail = async ({ to, subject, html }) => {
+  await axios.post(
+    "https://api.brevo.com/v3/smtp/email",
+    {
+      sender: {
+        name: "Freepixz",
+        email: process.env.EMAIL_FROM,
+      },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html,
+    },
+    {
+      headers: {
+        "api-key": process.env.BREVO_API_KEY,
+        "Content-Type": "application/json",
+      },
+      timeout: 10000,
+    }
+  );
+};
 
 export default sendEmail;
