@@ -8,7 +8,7 @@ import { FcGoogle } from 'react-icons/fc';
 
 const LoginPage = () => {
   const { theme } = useThemeStore();
-  const { login, isloading } = useAuthStore();
+  const { login, isloading, forgetPassword } = useAuthStore();
 
   const [loginInfo, setloginInfo] = useState({
     email: "",
@@ -69,8 +69,9 @@ const LoginPage = () => {
             </div>
 
             <div>
-              <label htmlFor="password" className="pl-2 text-md">
-                Password
+              <label htmlFor="password" className="pl-2 text-md flex justify-between">
+                <span>Password</span>
+                <span className='hover:underline cursor-pointer' onClick={()=> forgetPassword(loginInfo.email)}>Forgot your password?</span>
               </label>
               <div className="relative">
                 <Lock className="size-6 absolute top-1 left-2 pointer-events-none text-gray-400" />
@@ -115,6 +116,7 @@ const LoginPage = () => {
 
               <button
                 onClick={handleGoogleLogin}
+                disabled={isloading}
                 type="button"
                 className="flex items-center justify-center gap-2 border-2 border-gray-300 hover:bg-gray-100 transition-all ease-in-out rounded-lg w-80 sm:w-96 py-2 bg-white text-black font-medium shadow-md"
               >
@@ -122,7 +124,7 @@ const LoginPage = () => {
                 Continue with Google
               </button>
 
-              <span className="text-center">
+              <span className="text-center" disabled={isloading}>
                 Don&apos;t have an account?{" "}
                 <Link
                   to="/signup"

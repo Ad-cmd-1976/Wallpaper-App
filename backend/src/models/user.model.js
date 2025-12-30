@@ -36,7 +36,13 @@ const UserSchema=new mongoose.Schema(
         purchasedWallpapers:[{
             type:mongoose.Schema.Types.ObjectId,
             ref:"Image"
-        }]
+        }],
+        resetPasswordToken:{
+            type: String,
+        },
+        resetPasswordExpire:{
+            type: Date,
+        }
     },
     {
         timestamps:true
