@@ -21,7 +21,7 @@ const LoginPage = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `http://localhost:8080/auth/google`; 
+    window.location.href = `${import.meta.env.VITE_APP_URL}/auth/google`; 
   };
 
   return (

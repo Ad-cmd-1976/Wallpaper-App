@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Lock, Loader } from 'lucide-react';
 import { useThemeStore } from '../store/useThemeStore.js';
 import { motion } from 'framer-motion';
@@ -6,12 +7,14 @@ import { useAuthStore } from '../store/useAuthStore.js';
 
 const ResetPassPage = () => {
   const { theme } = useThemeStore();
-  const { isloading }=useAuthStore();
+  const { resetPassword, isloading }=useAuthStore();
+  const { token }=useParams();
 
   const [password, setPassword]=useState("");
 
-  const handleReset=()=>{
-
+  const handleReset=async (e)=>{
+    e.preventDefault();
+    resetPassword(token, password);
   }
 
   return (
@@ -61,6 +64,7 @@ const ResetPassPage = () => {
             <div className="flex flex-col justify-center items-center gap-5 mt-7">
               <div>
                 <button
+                  onClick={handleReset}
                   type="submit"
                   className="bg-blue-600 flex justify-center items-center hover:bg-blue-500 hover:scale-105 transition-all ease-in-out rounded-lg w-80 sm:w-96 py-1"
                   disabled={isloading}

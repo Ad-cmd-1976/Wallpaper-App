@@ -33,7 +33,7 @@ function App() {
           <Route path='/signup' element={!user?<SignupPage/>:<Navigate to='/' />}></Route>
           <Route path='/admin-dashboard' element={user?.role==="admin" ? <AdminPage/> : <Navigate to='/'/>}></Route>
           <Route path='/auth/success' element={<AuthSuccessPage/>}></Route>
-          <Route path='/reset-password' element={<ResetPassPage/>}/>
+          <Route path='/reset-password/:token' element={<ResetPassPage/>}/>
         </Routes>
       </div>
       <Toaster />

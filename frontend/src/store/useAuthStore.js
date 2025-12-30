@@ -81,12 +81,11 @@ export const useAuthStore=create((set,get)=>({
         }
     },
 
-    forgetPassword: async(email)=>{
-        console.log(email);
+    forgetPassword: async (email)=>{
         set({ isloading: true });
         try{
             const res=await axios.post('/auth/forget-password', { email });
-            console.log(res);
+            toast.success(res.data.message);
         }
         catch(error){
             toast.error(error.response.data.message || "Failed to forget password");
@@ -95,4 +94,18 @@ export const useAuthStore=create((set,get)=>({
             set({ isloading: false });
         }
     },
+    
+    resetPassword: async (token, password)=>{
+        set({ isloading: true });
+        try{
+            const res=await axios.post(`/auth/reset-password/${token}`, { password });
+            toast.success(res.data.message);
+        }
+        catch(error){
+            toast.error(error.response.data.message || "Failed to forget password");
+        }
+        finally{
+            set({ isloading: false });
+        }
+    }
 }))

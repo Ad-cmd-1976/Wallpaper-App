@@ -196,7 +196,7 @@ export const resetPassword=async (req,res)=>{
         
         const hashed=crypto.createHash("sha256").update(token).digest("hex");
         
-        const user=UserModel.findOne({ resetPasswordToken: hashed, resetPasswordExpire: { $gt: Date.now() } });
+        const user=await UserModel.findOne({ resetPasswordToken: hashed, resetPasswordExpire: { $gt: Date.now() } });
         
         if(!user) return res.status(400).json({ message: "Invalid or Expired Token" });
         
@@ -204,9 +204,9 @@ export const resetPassword=async (req,res)=>{
         user.password=await bcrypt.hash(password,salt);
         user.resetPasswordToken=undefined;
         user.resetPasswordExpire=undefined;
-        await newUser.save();
+        await user.save();
         
-        res.status(200).json({ message: "Password Reset Successfull" });
+        res.status(200).json({ message: "Password Reset Successfull! Please Login" });
     }
     catch(error){
         console.log("Error in resetPassword function of auth controller:", error);
