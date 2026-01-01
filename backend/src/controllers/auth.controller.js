@@ -157,7 +157,7 @@ export const forgetPassword=async (req,res)=>{
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             return res.status(400).json({ message: 'Invalid email address' });
         }
-
+        
         const user=await UserModel.findOne({ email });
         if(!user) return res.status(200).json({ message: "If email exists, reset link is sent to it" });
         
@@ -197,6 +197,10 @@ export const resetPassword=async (req,res)=>{
         const { token }=req.params;
         const { password }=req.body;
         
+        if(password.length<6){
+            return res.status(401).json({message:"Password should be atleast 6 characters long!"});
+        }
+        
         const hashed=crypto.createHash("sha256").update(token).digest("hex");
         
         const user=await UserModel.findOne({ resetPasswordToken: hashed, resetPasswordExpire: { $gt: Date.now() } });
@@ -207,7 +211,8 @@ export const resetPassword=async (req,res)=>{
         user.password=await bcrypt.hash(password,salt);
         user.resetPasswordToken=undefined;
         user.resetPasswordExpire=undefined;
-        await user.save();
+        const email=user.email;
+        await UserModel.findOneAndUpdate({ email }, user );
         
         res.status(200).json({ message: "Password Reset Successfull! Please Login" });
     }
