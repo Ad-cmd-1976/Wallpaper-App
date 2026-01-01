@@ -62,7 +62,7 @@ export const login=async (req,res)=>{
         
         const user=await UserModel.findOne({email});
         if(!user) return res.status(400).json({message:"Invalid User Credentials!"});
-        const isPasswordEqual=bcrypt.compare(password,user.password);
+        const isPasswordEqual=await bcrypt.compare(password,user.password);
         if(!isPasswordEqual) return res.status(400).json({ message:"Invalid User Credentials!" });
         
         const {accessToken,refreshToken}=generateTokens(user._id);
@@ -196,11 +196,13 @@ export const resetPassword=async (req,res)=>{
     try{
         const { token }=req.params;
         const { password }=req.body;
+
+        console.log(password);
         
         if(password.length<6){
             return res.status(401).json({message:"Password should be atleast 6 characters long!"});
         }
-        
+
         const hashed=crypto.createHash("sha256").update(token).digest("hex");
         
         const user=await UserModel.findOne({ resetPasswordToken: hashed, resetPasswordExpire: { $gt: Date.now() } });
