@@ -196,8 +196,6 @@ export const resetPassword=async (req,res)=>{
     try{
         const { token }=req.params;
         const { password }=req.body;
-
-        console.log(password);
         
         if(password.length<6){
             return res.status(401).json({message:"Password should be atleast 6 characters long!"});
