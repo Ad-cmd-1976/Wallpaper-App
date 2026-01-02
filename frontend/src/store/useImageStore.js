@@ -70,7 +70,6 @@ export const useImageStore=create((set, get)=>({
     },
 
     downloadImage:async (publicId)=>{
-        set({})
         try{
             const params=new URLSearchParams();
             params.append("publicId", publicId);
@@ -161,9 +160,25 @@ export const useImageStore=create((set, get)=>({
         }
         catch(error){
             console.log("Error in uploadImage function of useImageStore", error);
+            toast.error(error.response.data.error || "Failed to Upload Image");
         }   
         finally{
             set({ isLoading:false });
         }
-    }
+    },
+    
+    deleteImage: async (id)=>{
+        set({ isLoading: true });
+        try{
+            const res=await axios.delete(`/images/delete-image/${id}`);
+            toast.success(res.data.message);
+        }
+        catch(error){
+            console.log("Error in uploadImage function of useImageStore", error);
+            toast.error(error.response.data.error || "Failed to Delete Image");
+        }
+        finally{
+            set({ isLoading: false });
+        }
+    },
 }))

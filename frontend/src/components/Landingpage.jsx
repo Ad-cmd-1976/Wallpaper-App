@@ -9,7 +9,7 @@ import ComingSoon from './ComingSoon.jsx';
 import Masonry from 'react-masonry-css';
 
 const Landingpage = () => {
-  const { imageList, getImages, isLoading, downloadImage, page, hasMore } = useImageStore();
+  const { imageList, getImages, isLoading, downloadImage, page, hasMore, deleteImage } = useImageStore();
   const { purchaseIds, getPurchaseIds, buyImage } = usePurchaseStore();
   const { theme } = useThemeStore();
   const { user } = useAuthStore();
@@ -72,6 +72,7 @@ const Landingpage = () => {
             purchaseIds={purchaseIds}
             downloadImage={downloadImage}
             buyImage={buyImage}
+            deleteImage={deleteImage}
           />
         ))}
       </Masonry>

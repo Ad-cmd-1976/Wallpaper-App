@@ -5,6 +5,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import sharp from 'sharp';
 import ImageModel from '../models/image.model.js';
 import PurchaseModel from '../models/purchase.model.js';
+import { deleteFromS3 } from '../lib/helper.js';
 
 export const getImages=async (req,res)=>{
     try{
@@ -233,6 +234,32 @@ export const uploadPlusImageData=async (req,res)=>{
     }
     catch(error){
         console.log("Error in uploadPlusImageData function from image controller", error);
+        res.status(500).json({ message:"Internal Server Error!" });
+    }
+}
+
+export const deleteImage=async (req, res)=>{
+    try{
+        const { id }=req.params;
+
+        console.log(id);
+
+        const imageData=await ImageModel.findByIdAndDelete(id);
+        
+        if(!imageData) return res.status(404).json({ message: "Image Not Found! "});
+        
+        const originalKey=imageData.imageUrl.split(".amazonaws.com/")[1];
+        await deleteFromS3(originalKey);
+
+        if(imageData.isPremium){
+            const previewKey=imageData.previewUrl.split(".amazonaws.com/")[1];
+            await deleteFromS3(previewKey);
+        }
+        
+        return res.status(200).json({ message: "Image Deleted Successfully!" });
+    }
+    catch(error){
+        console.log("Error in deleteImage function from image controller", error);
         res.status(500).json({ message:"Internal Server Error!" });
     }
 }

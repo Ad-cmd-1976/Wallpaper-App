@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
 import TokenModel from '../models/token.model.js';
 import dotenv from 'dotenv';
+import { DeleteObjectCommand } from '@aws-sdk/client-s3';
+import s3 from './aws.js';
 
 dotenv.config();
 
@@ -30,4 +32,13 @@ export const setCookies=(res,accessToken,refreshToken)=>{
         path:"/",
         maxAge:7*24*60*60*1000
     });
+}
+
+export const deleteFromS3=async (key)=>{
+    const command=new DeleteObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: key
+    });
+
+    await s3.send(command);
 }
