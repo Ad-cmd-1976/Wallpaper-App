@@ -92,6 +92,24 @@ export const usePurchaseStore=create((set, get)=>({
                 name: "Wallpaper Store",
                 description: "Purchase Premium Wallpaper",
                 order_id: data.orderId,
+                method:{
+                    upi: true,
+                    card: true,
+                    wallet: true,
+                    netbanking: true,
+                },
+                config:{
+                    display:{
+                        blocks:{
+                            upi:{
+                                name:"Pay via UPI",
+                                instruments:[{ method: "upi"}]
+                            }
+                        },
+                        sequence:["block.upi", "block.card", "block.netbanking"],
+                        preferences: { show_default_blocks: true }
+                    }
+                },
                 handler:async (response)=>{ await get().verifyPayment(response, data.imageId, data.amount)},
                 prefill:{
                     name:"Test User",
