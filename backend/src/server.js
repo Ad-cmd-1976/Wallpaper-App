@@ -13,10 +13,15 @@ dotenv.config();
 const app=express()
 const port=process.env.PORT || 8080;
 
-app.use(cors({
+app.set("trust proxy", 1);
+const corsOptions={
     origin:["http://localhost:5173","https://wallpaper-app-topaz.vercel.app"],
     credentials:true
-}));
+}
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
+
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
