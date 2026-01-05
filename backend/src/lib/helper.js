@@ -21,14 +21,16 @@ export const setCookies=(res,accessToken,refreshToken)=>{
     res.cookie("accessToken",accessToken,{
         httpOnly:true,
         secure: isProduction,
-        sameSite: isProduction ? "none": "lax",
+        sameSite: isProduction ? "None": "lax",
+        domain: isProduction ? ".wallpaper-api.online" : undefined,
         path:"/",
         maxAge:15*60*1000
     });
     res.cookie("refreshToken",refreshToken,{
         httpOnly:true,
         secure:isProduction,
-        sameSite:isProduction ? "none": "lax",
+        sameSite:isProduction ? "None": "lax",
+        domain: isProduction ? ".wallpaper-api.online" : undefined,
         path:"/",
         maxAge:7*24*60*60*1000
     });
