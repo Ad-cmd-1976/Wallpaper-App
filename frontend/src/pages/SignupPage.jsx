@@ -23,7 +23,7 @@ const SignupPage = () => {
   }
 
   const handleGoogleLogin=async ()=>{
-    window.location.href=`http://localhost:8080/api/auth/google`;
+    window.location.href=`${import.meta.env.VITE_API_BASE_URL}/auth/google`;
   }
 
   return (
