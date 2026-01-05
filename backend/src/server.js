@@ -34,6 +34,7 @@ app.use('/api/images', imageRoutes);
 app.use('/api/payment', paymentRoutes);
 
 app.listen(port,()=>{
+    console.log(process.env.NODE_ENV);
     console.log(`Listening at port ${port}`);
     connectdb();
 })
