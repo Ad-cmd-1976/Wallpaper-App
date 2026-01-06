@@ -55,7 +55,7 @@ export const useAuthStore=create((set,get)=>({
 
     getGoogleUser: async ()=>{
         try{
-            const res=await axios.post('/auth/me');
+            const res=await axios.post('/auth/profile');
             set({ user: res.data });
             return true;
 

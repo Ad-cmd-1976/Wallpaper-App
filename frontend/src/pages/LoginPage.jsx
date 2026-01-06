@@ -21,7 +21,8 @@ const LoginPage = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`; 
+    console.log(import.meta.env.MODE==="development" ? "http://localhost:8080/api": "/api");
+    window.location.href = `${import.meta.env.MODE==="development" ? "http://localhost:8080/api": "/api"}/auth/google`; 
   };
 
   return (
