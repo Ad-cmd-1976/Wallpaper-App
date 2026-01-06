@@ -3,7 +3,7 @@ import axios from 'axios';
 console.log(import.meta.env.MODE);
 console.log(import.meta.env.VITE_API_BASE_URL);
 const axiosInstance=axios.create({
-    baseURL:import.meta.env.MODE==="development" ? "http://localhost:8080/api": import.meta.env.VITE_API_BASE_URL,
+    baseURL:import.meta.env.MODE==="development" ? "http://localhost:8080/api": "/api",
     withCredentials:true
 });
 
