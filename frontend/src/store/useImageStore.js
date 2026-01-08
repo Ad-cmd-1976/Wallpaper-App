@@ -128,6 +128,7 @@ export const useImageStore=create((set, get)=>({
                 }
             }
             else{
+                if(Number(imageData.price) || Number(imageData.discountPercentage)) return toast.error("Clear Price and Discount for Non-plus!");
                 try{
                     let updatedData={};
                     try{
