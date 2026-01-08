@@ -101,10 +101,10 @@ sh
 ### 1. Clone the repository into your desired directory
 git clone https://github.com/Ad-cmd-1976/FreePixz.git
 
-# 2. Navigate into the project's root folder
+### 2. Navigate into the project's root folder
 cd Wallpaper-App
 
-# 3. Create a .env file in the backend directory.
+### 3. Create a .env file in the backend directory.
     # Add the following environment variables:
         PORT=8080
         FRONTEND_URL=your_frontend_url
@@ -129,13 +129,13 @@ cd Wallpaper-App
         BREVO_API_KEY=your_brevo_api_key
         EMAIL_FROM=your_brevo_sender_email
 
-# 4. Run the application
+### 4. Run the application
     # Start the backend
       cd backend
       node server.js
     # Start the frontend
       cd frontend
       npm run dev
-# 5. Access the application at localhost:5173
+### 5. Access the application at localhost:5173
 
 ---
