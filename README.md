@@ -132,7 +132,7 @@ cd Wallpaper-App
 ### 4. Run the application
     # Start the backend
       cd backend
-      node server.js
+      node src/server.js
     # Start the frontend
       cd frontend
       npm run dev
