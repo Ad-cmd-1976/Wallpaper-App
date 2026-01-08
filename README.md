@@ -98,7 +98,7 @@ Nginx (VPS)
 
 To set up this project locally, follow these steps:
 sh
-# 1. Clone the repository into your desired directory
+### 1. Clone the repository into your desired directory
 git clone https://github.com/Ad-cmd-1976/FreePixz.git
 
 # 2. Navigate into the project's root folder
