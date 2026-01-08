@@ -69,14 +69,14 @@ The application is **fully self-hosted on a VPS**, solving real-world deployment
 ## 🚀 Deployment Architecture  
 
 User Browser
-↓
+   ↓
 Nginx (VPS)
-├── React Frontend (Static Build)
-└── Node.js API (PM2)
-↓
-MongoDB
-↓
-AWS S3
+   ├── React Frontend (Static Build)
+   └── Node.js API (PM2)
+           ↓
+        MongoDB
+           ↓
+         AWS S3
 
 ✔️ Frontend & backend hosted on the **same VPS**  
 ✔️ Solved mobile & tablet cookie restrictions
