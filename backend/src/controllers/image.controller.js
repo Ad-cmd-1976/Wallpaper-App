@@ -242,7 +242,6 @@ export const deleteImage=async (req, res)=>{
     try{
         const { id }=req.params;
 
-        console.log(id);
 
         const imageData=await ImageModel.findByIdAndDelete(id);
         

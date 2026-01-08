@@ -21,7 +21,7 @@ const ProgressiveImageCard = ({
       setIsLoaded(true);
       setIsLandscape(img.width >= img.height);
     };
-  }, [image.imageUrl]);
+  }, [image.previewUrl]);
 
   const aspectClass = isLandscape ? 'aspect-[16/9]' : 'aspect-[9/16]';
   const isPurchased = purchaseIds.includes(image._id);
@@ -38,87 +38,107 @@ const ProgressiveImageCard = ({
       <img
         src={src}
         alt={image.title || 'Image'}
-        className={`w-full h-full object-cover cursor-pointer transition-transform duration-500 ease-out group-hover:scale-105 ${
+        className={`w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 ${
           !isLoaded ? 'blur-lg' : 'blur-0'
         }`}
       />
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300" />
 
-      {!isPurchased && hasDiscount && (
-        <div className="absolute top-3 left-3 bg-pink-600/90 text-white text-xs sm:text-sm font-semibold px-3 py-1 rounded-full shadow-md">
-          FreePixz+ {image.discountPercentage}% off for ₹ {discountedPrice}
-        </div>
-      )}
-
-      {!isPurchased && image.price > 0 && (
-        <div className="absolute top-3 right-3 bg-black/70 text-white text-xs sm:text-sm font-semibold px-3 py-1 rounded-full shadow-md">
-          ₹ {image.price}
-        </div>
-      )}
-
-      {image.title && (
-        <div className="absolute bottom-3 left-3 text-white text-sm sm:text-base font-medium drop-shadow-lg">
-          {image.title}
-        </div>
-      )}
-
-      {((user && image.isPremium && isPurchased) || !image.isPremium) ? (
-        <div
-          className="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 flex items-center gap-3
-          sm:translate-y-8 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100
-          transition-all duration-300"
-        >
-          {user && (
-            <button
-              onClick={() => deleteImage(image._id)}
-              className="bg-red-500/20 hover:bg-red-500/30 border border-red-400/40 text-red-300
-              p-3 rounded-full shadow-lg backdrop-blur-md
-              transition-all duration-300 hover:scale-110 active:scale-95"
-            >
-              <Trash2 className="w-5 h-5" />
-            </button>
+      {!isPurchased && (image.price > 0 || hasDiscount) && (
+        <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 sm:opacity-0 sm:-translate-y-2 sm:group-hover:opacity-100 sm:group-hover:translate-y-0 transition-all duration-300">
+          {hasDiscount && (
+            <div className="bg-pink-600/90 text-white text-xs sm:text-sm font-semibold px-3 py-1 rounded-full shadow-md">
+              FreePixz+ {image.discountPercentage}% off · ₹ {discountedPrice}
+            </div>
           )}
-
-          <button
-            onClick={() => downloadImage(image.publicId)}
-            className="bg-white/10 hover:bg-white/20 border border-white/30 text-white
-            p-3 rounded-full shadow-lg backdrop-blur-md
-            transition-all duration-300 hover:scale-110 active:scale-95"
-          >
-            <Download className="w-6 h-6" />
-          </button>
-        </div>
-      ) : (
-        <div className="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 flex items-end gap-3">
-          {user && (
-            <button
-              onClick={() => deleteImage(image._id)}
-              className="bg-red-500/20 hover:bg-red-500/30 border border-red-400/40 text-red-300
-              p-3 rounded-full shadow-lg backdrop-blur-md
-              transition-all duration-300 hover:scale-110 active:scale-95"
-            >
-              <Trash2 className="w-5 h-5" />
-            </button>
-          )}
-
-          <div className="bg-white/10 border border-white/30 backdrop-blur-md p-3 rounded-full cursor-not-allowed shadow-lg">
-            <Lock className="w-6 h-6 text-white" />
+          <div className="bg-black/70 text-white text-xs sm:text-sm font-semibold px-3 py-1 rounded-full shadow-md ml-auto">
+            ₹ {image.price}
           </div>
-
-          <button
-            onClick={() => buyImage(image._id)}
-            className="bg-gradient-to-tr from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500
-            shadow-lg hover:shadow-xl text-white font-medium
-            px-4 py-2 rounded-full flex items-center gap-2
-            sm:translate-y-4 sm:opacity-0 sm:group-hover:opacity-100 sm:group-hover:translate-y-0
-            transition-all duration-300 hover:scale-105 active:scale-95"
-          >
-            <ShoppingCart className="w-5 h-5" />
-            <span className="hidden sm:inline">Buy</span>
-          </button>
         </div>
       )}
+
+      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-3">
+        {image.title && (
+          <div className="text-white text-sm sm:text-base font-medium truncate max-w-[65%]">
+            {image.title}
+          </div>
+        )}
+
+        {((user && image.isPremium && isPurchased) || !image.isPremium) ? (
+          <div className="flex items-center gap-2 sm:opacity-0 sm:translate-y-3 sm:group-hover:opacity-100 sm:group-hover:translate-y-0 transition-all duration-300">
+            {user && user.role === 'admin' && (
+              <button
+                onClick={() => deleteImage(image._id)}
+                className="
+                  w-10 h-10 flex items-center justify-center
+                  bg-red-500/20 hover:bg-red-500/30
+                  border border-red-400/40 text-red-300
+                  rounded-full backdrop-blur-md shadow-lg
+                  transition-all duration-300 hover:scale-110 active:scale-95
+                "
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            )}
+
+            <button
+              onClick={() => downloadImage(image.publicId)}
+              className="
+                w-10 h-10 flex items-center justify-center
+                bg-white/10 hover:bg-white/20
+                border border-white/30 text-white
+                rounded-full backdrop-blur-md shadow-lg
+                transition-all duration-300 hover:scale-110 active:scale-95
+              "
+            >
+              <Download className="w-5 h-5" />
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 sm:opacity-0 sm:translate-y-3 sm:group-hover:opacity-100 sm:group-hover:translate-y-0 transition-all duration-300">
+            {user && user.role === 'admin' && (
+              <button
+                onClick={() => deleteImage(image._id)}
+                className="
+                  w-10 h-10 flex items-center justify-center
+                  bg-red-500/20 hover:bg-red-500/30
+                  border border-red-400/40 text-red-300
+                  rounded-full backdrop-blur-md shadow-lg
+                  transition-all duration-300 hover:scale-110 active:scale-95
+                "
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            )}
+
+            <div
+              className="
+                w-10 h-10 flex items-center justify-center
+                bg-white/10 border border-white/30
+                rounded-full backdrop-blur-md shadow-lg
+              "
+            >
+              <Lock className="w-5 h-5 text-white" />
+            </div>
+
+            <button
+              onClick={() => buyImage(image._id)}
+              className="
+                bg-gradient-to-tr from-pink-500 to-purple-600
+                hover:from-pink-400 hover:to-purple-500
+                text-white font-medium
+                px-3 py-2 rounded-full flex items-center gap-2
+                shadow-lg hover:shadow-xl
+                transition-all duration-300 hover:scale-105 active:scale-95
+              "
+            >
+              <ShoppingCart className="w-5 h-5" />
+              <span className="hidden sm:inline">Buy</span>
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

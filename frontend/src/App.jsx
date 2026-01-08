@@ -9,12 +9,15 @@ import SignupPage from './pages/SignupPage.jsx'
 import AdminPage from './pages/AdminPage.jsx';
 import AuthSuccessPage from './pages/AuthSuccessPage.jsx';
 import ResetPassPage from './pages/ResetPassPage.jsx';
+import DownloadOverlay from './components/DownloadOverlay.jsx';
 import { useAuthStore } from './store/useAuthStore.js'
 import { useThemeStore } from './store/useThemeStore.js';
+import { useImageStore } from './store/useImageStore.js';
 import './App.css'
 
 function App() {
   const { user, checkAuth, checkingAuth }=useAuthStore();
+  const { isDownloading }=useImageStore();
   const { theme }=useThemeStore();
 
   useEffect(()=>{
@@ -25,6 +28,7 @@ function App() {
 
   return (
     <div className={`${theme?"bg-white text-gray-400":"bg-black text-white"} min-h-full`}>
+      {isDownloading && <DownloadOverlay/>}
       <Navbar/>
       <div className='pt-16 min-h-screen'>
         <Routes>

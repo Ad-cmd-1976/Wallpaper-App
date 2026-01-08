@@ -6,6 +6,7 @@ import axios from '../lib/axios.js';
 export const useImageStore=create((set, get)=>({
     imageList:[],
     isLoading:false,
+    isDownloading: false,
     page:1,
     limit:10,
     searchVal:'',
@@ -70,6 +71,7 @@ export const useImageStore=create((set, get)=>({
     },
 
     downloadImage:async (publicId)=>{
+        set({ isDownloading:true });
         try{
             const params=new URLSearchParams();
             params.append("publicId", publicId);
@@ -102,6 +104,9 @@ export const useImageStore=create((set, get)=>({
             else toast.error(error.message || "Download Failed!");
             console.log("Error in downloadImage function", error.message);
         }
+        finally{
+            set({ isDownloading:false });
+        }
     },
 
     uploadImage:async (image,imageData)=>{
@@ -109,7 +114,7 @@ export const useImageStore=create((set, get)=>({
         
         try {
             if(!image || !imageData.title) return toast.error("Image and title are required!");
-            
+
             if(imageData.isPremium){
                 try{
                     const formData=new FormData();
