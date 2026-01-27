@@ -37,7 +37,7 @@ const Landingpage = () => {
           getImages(page + 1);
         }
       },
-      { threshold: 1 }
+      { rootMargin: "200px" }
     );
 
     const currentLoader = loaderRef.current;

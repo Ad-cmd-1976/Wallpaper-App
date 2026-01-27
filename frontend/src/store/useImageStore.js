@@ -34,7 +34,7 @@ export const useImageStore=create((set, get)=>({
             set((state)=>({
                 imageList: page===1 ? newImages : [...state.imageList,...newImages],
                 page,
-                hasMore: newImages.length>0
+                hasMore: newImages.length===get().limit
             }))
         }
         catch(error){
@@ -59,7 +59,8 @@ export const useImageStore=create((set, get)=>({
             set((state)=>({
                 imageList: page===1 ? newImages : [...state.imageList,...newImages],
                 searchVal:searchVal,
-                hasMore: newImages.length>0
+                page,
+                hasMore: newImages.length===limit
             }))
         }
         catch(error){
