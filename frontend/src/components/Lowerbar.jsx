@@ -66,8 +66,8 @@ const Lowerbar = () => {
         </div>
 
         <div className="flex gap-9 justify-between items-center overflow-x-auto scrollbar-hide">
-          <LowerButton content="Mobile Wallpaper"/>
-          <LowerButton content="Desktop Wallpaper"/>
+          <LowerButton content="Mobile"/>
+          <LowerButton content="Desktop"/>
           <LowerButton content="Nature"/>
           <LowerButton content="Anime"/>
           <LowerButton content="Gaming"/>
