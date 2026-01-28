@@ -54,7 +54,7 @@ const Lowerbar = () => {
           Freepixz+
           </div>
           <div 
-          className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'}`}
+          className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'} cursor-pointer select-none`}
           onClick={()=>resetToHome()}
           >
             Home

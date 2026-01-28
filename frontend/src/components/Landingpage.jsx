@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useImageStore } from '../store/useImageStore.js';
 import { useThemeStore } from '../store/useThemeStore.js';
 import LoadingSpinner from './LoadingSpinner';
@@ -6,6 +6,7 @@ import { useAuthStore } from '../store/useAuthStore.js';
 import { usePurchaseStore } from '../store/usePurchaseStore.js';
 import ProgressiveImageCard from './ProgressiveImageCard.jsx';
 import ComingSoon from './ComingSoon.jsx';
+import PreviewOverlay from './PreviewOverlay.jsx';
 import Masonry from 'react-masonry-css';
 
 const Landingpage = () => {
@@ -13,6 +14,8 @@ const Landingpage = () => {
   const { purchaseIds, getPurchaseIds, buyImage } = usePurchaseStore();
   const { theme } = useThemeStore();
   const { user } = useAuthStore();
+
+  const [previewImage, setpreviewImage]=useState(null);
 
   const loaderRef=useRef(null);
 
@@ -73,9 +76,17 @@ const Landingpage = () => {
             downloadImage={downloadImage}
             buyImage={buyImage}
             deleteImage={deleteImage}
+            onPreview={()=>setpreviewImage(image)}
           />
         ))}
       </Masonry>
+
+      { previewImage && (
+        <PreviewOverlay
+        image={previewImage}
+        onClose={()=> setpreviewImage(null)}
+        />
+      )}
 
       <div ref={loaderRef} className='flex justify-center my-2'>
         { isLoading && <LoadingSpinner/>}

@@ -21,9 +21,11 @@ const AdminPage = () => {
   
     const handleUpload = async (e) => {
       e.preventDefault();
-      await uploadImage(selectedFile,imageData);
-      setimageData({ title:'', price:0, tags:'', discountPercentage:0, isPremium:false, imageUrl:'', publicId:'', previewUrl:'' });
-      setselectedFile(null);
+      const success=await uploadImage(selectedFile,imageData);
+      if(success){
+        setimageData({ title:'', price:0, tags:'', discountPercentage:0, isPremium:false, imageUrl:'', publicId:'', previewUrl:'' });
+        setselectedFile(null);
+      }
     };
 
   return (

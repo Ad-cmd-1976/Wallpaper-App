@@ -58,7 +58,6 @@ export const useImageStore=create((set, get)=>({
 
             set((state)=>({
                 imageList: page===1 ? newImages : [...state.imageList,...newImages],
-                searchVal:searchVal,
                 page,
                 hasMore: newImages.length===limit
             }))
@@ -128,13 +127,17 @@ export const useImageStore=create((set, get)=>({
                     
                     const res=await axios.post('/images/plus-upload', formData, { withCredentials:true });
                     toast.success(res.data.message);
+                    return true;
                 }
                 catch(error){
                     console.log("Error in uploading plus image", error);
                 }
             }
             else{
-                if(Number(imageData.price) || Number(imageData.discountPercentage)) return toast.error("Clear Price and Discount for Non-plus!");
+                if(Number(imageData.price) || Number(imageData.discountPercentage)){ 
+                    toast.error("Clear Price and Discount for Non-plus!");
+                    return false;
+                }
                 try{
                     let updatedData={};
                     try{
@@ -159,15 +162,18 @@ export const useImageStore=create((set, get)=>({
                     }
                     const res=await axios.post('/images/upload', updatedData, { withCredentials:true });
                     toast.success(res.data.message);
+                    return true;
                 }
                 catch(error){
                     console.log("Error in uploadImage function from useImageStore", error);
+                    return false;
                 }
             }
         }
         catch(error){
             console.log("Error in uploadImage function of useImageStore", error);
             toast.error(error.response.data.error || "Failed to Upload Image");
+            return false;
         }   
         finally{
             set({ isLoading:false });

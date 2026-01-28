@@ -7,7 +7,8 @@ const ProgressiveImageCard = ({
   purchaseIds,
   downloadImage,
   buyImage,
-  deleteImage
+  deleteImage,
+  onPreview
 }) => {
   const [src, setSrc] = useState(image.previewUrl);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -38,12 +39,13 @@ const ProgressiveImageCard = ({
       <img
         src={src}
         alt={image.title || 'Image'}
-        className={`w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 ${
+        onClick={onPreview}
+        className={`w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 ring-1 ring-white/10 ${
           !isLoaded ? 'blur-lg' : 'blur-0'
         }`}
       />
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300" />
 
       {!isPurchased && (image.price > 0 || hasDiscount) && (
         <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 sm:opacity-0 sm:-translate-y-2 sm:group-hover:opacity-100 sm:group-hover:translate-y-0 transition-all duration-300">
