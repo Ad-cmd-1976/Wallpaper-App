@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Download, ShoppingCart, Lock, Trash2 } from 'lucide-react';
+import AdminActions from './AdminActions';
 
 const ProgressiveImageCard = ({
   image,
   user,
   purchaseIds,
   downloadImage,
-  buyImage,
-  deleteImage,
   onPreview
 }) => {
   const [src, setSrc] = useState(image.previewUrl);
@@ -47,19 +46,6 @@ const ProgressiveImageCard = ({
 
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300" />
 
-      {!isPurchased && (image.price > 0 || hasDiscount) && (
-        <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 sm:opacity-0 sm:-translate-y-2 sm:group-hover:opacity-100 sm:group-hover:translate-y-0 transition-all duration-300">
-          {hasDiscount && (
-            <div className="bg-pink-600/90 text-white text-xs sm:text-sm font-semibold px-3 py-1 rounded-full shadow-md">
-              FreePixz+ {image.discountPercentage}% off · ₹ {discountedPrice}
-            </div>
-          )}
-          <div className="bg-black/70 text-white text-xs sm:text-sm font-semibold px-3 py-1 rounded-full shadow-md ml-auto">
-            ₹ {image.price}
-          </div>
-        </div>
-      )}
-
       <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-3">
         {image.title && (
           <div className="text-white text-sm sm:text-base font-medium truncate max-w-[65%]">
@@ -70,18 +56,7 @@ const ProgressiveImageCard = ({
         {((user && image.isPremium && isPurchased) || !image.isPremium) ? (
           <div className="flex items-center gap-2 sm:opacity-0 sm:translate-y-3 sm:group-hover:opacity-100 sm:group-hover:translate-y-0 transition-all duration-300">
             {user && user.role === 'admin' && (
-              <button
-                onClick={() => deleteImage(image._id)}
-                className="
-                  w-10 h-10 flex items-center justify-center
-                  bg-red-500/20 hover:bg-red-500/30
-                  border border-red-400/40 text-red-300
-                  rounded-full backdrop-blur-md shadow-lg
-                  transition-all duration-300 hover:scale-110 active:scale-95
-                "
-              >
-                <Trash2 className="w-5 h-5" />
-              </button>
+              <AdminActions image={image}/>
             )}
 
             <button
@@ -100,18 +75,7 @@ const ProgressiveImageCard = ({
         ) : (
           <div className="flex items-center gap-2 sm:opacity-0 sm:translate-y-3 sm:group-hover:opacity-100 sm:group-hover:translate-y-0 transition-all duration-300">
             {user && user.role === 'admin' && (
-              <button
-                onClick={() => deleteImage(image._id)}
-                className="
-                  w-10 h-10 flex items-center justify-center
-                  bg-red-500/20 hover:bg-red-500/30
-                  border border-red-400/40 text-red-300
-                  rounded-full backdrop-blur-md shadow-lg
-                  transition-all duration-300 hover:scale-110 active:scale-95
-                "
-              >
-                <Trash2 className="w-5 h-5" />
-              </button>
+              <AdminActions image={image}/>
             )}
 
             <div
@@ -123,21 +87,6 @@ const ProgressiveImageCard = ({
             >
               <Lock className="w-5 h-5 text-white" />
             </div>
-
-            <button
-              onClick={() => buyImage(image._id)}
-              className="
-                bg-gradient-to-tr from-pink-500 to-purple-600
-                hover:from-pink-400 hover:to-purple-500
-                text-white font-medium
-                px-3 py-2 rounded-full flex items-center gap-2
-                shadow-lg hover:shadow-xl
-                transition-all duration-300 hover:scale-105 active:scale-95
-              "
-            >
-              <ShoppingCart className="w-5 h-5" />
-              <span className="hidden sm:inline">Buy</span>
-            </button>
           </div>
         )}
       </div>

@@ -194,4 +194,13 @@ export const useImageStore=create((set, get)=>({
             set({ isLoading: false });
         }
     },
+
+    editImage: async (imageId)=>{
+        try{
+
+        }
+        catch(error){
+
+        }
+    }
 }))

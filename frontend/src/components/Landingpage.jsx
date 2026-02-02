@@ -10,7 +10,7 @@ import PreviewOverlay from './PreviewOverlay.jsx';
 import Masonry from 'react-masonry-css';
 
 const Landingpage = () => {
-  const { imageList, getImages, isLoading, downloadImage, page, hasMore, deleteImage } = useImageStore();
+  const { imageList, getImages, isLoading, downloadImage, page, hasMore, deleteImage, editImage } = useImageStore();
   const { purchaseIds, getPurchaseIds, buyImage } = usePurchaseStore();
   const { theme } = useThemeStore();
   const { user } = useAuthStore();
@@ -76,6 +76,7 @@ const Landingpage = () => {
             downloadImage={downloadImage}
             buyImage={buyImage}
             deleteImage={deleteImage}
+            editImage={editImage}
             onPreview={()=>setpreviewImage(image)}
           />
         ))}
