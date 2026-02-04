@@ -113,7 +113,10 @@ export const useImageStore=create((set, get)=>({
         set({ isLoading:true });
         
         try {
-            if(!image || !imageData.title) return toast.error("Image and title are required!");
+            if(!image || !imageData.title){ 
+                toast.error("Image and title are required!");
+                return false;
+            }
 
             if(imageData.isPremium){
                 try{
