@@ -30,7 +30,7 @@ const Lowerbar = () => {
             <Search color={theme ? "gray" : "black"} />
             <input
               onChange={(e) => setsearchVal(e.target.value)}
-              className="w-full bg-white text-gray-400 outline-none ml-2 text-sm"
+              className={`w-full bg-white outline-none ml-2 text-sm ${theme ? "text-gray-400" : "text-black"}`}
               value={searchVal}
               type="search"
               placeholder="Search Photos and Wallpapers"
