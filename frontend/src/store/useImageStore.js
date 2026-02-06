@@ -10,17 +10,19 @@ export const useImageStore=create((set, get)=>({
     page:1,
     limit:10,
     searchVal:'',
+    buttonSearchVal:'',
     hasMore: true,
     setsearchVal:(val)=>set({ searchVal:val }),
+    setbuttonSearchVal:(val)=>set({ buttonSearchVal:val }),
 
     resetToHome:async ()=>{
-        set({ searchVal:'', imageList:[], page:1 });
+        set({ searchVal:'', buttonSearchVal:'', imageList:[], page:1 });
         await get().getImages(1);
     },
 
     getImages:async (page=1)=>{
-        const { searchVal }=get();
-        if(searchVal) return await get().searchImages(searchVal,page);
+        const { searchVal, buttonSearchVal }=get();
+        if(searchVal || buttonSearchVal) return await get().searchImages(searchVal ? searchVal : buttonSearchVal,page);
 
         set({ isLoading:true });
         try{

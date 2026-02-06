@@ -3,10 +3,10 @@ import { useThemeStore } from "../store/useThemeStore.js";
 
 const LowerButton = ({content}) => {
     const { theme }=useThemeStore();
-    const { searchImages, setsearchVal }=useImageStore();
+    const { searchImages, setbuttonSearchVal }=useImageStore();
 
     const handleClick=()=>{
-      setsearchVal("");
+      setbuttonSearchVal(content);
       searchImages(content, 1);
     };
 
