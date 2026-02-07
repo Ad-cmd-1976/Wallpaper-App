@@ -39,7 +39,6 @@ const PreviewOverlay = ({ image, onClose }) => {
         <X className="w-6 h-6" />
       </button>
 
-      {/* MAIN CONTENT */}
       <div
         className={`
           relative max-w-[95vw] sm:max-w-[90vw]
@@ -47,33 +46,33 @@ const PreviewOverlay = ({ image, onClose }) => {
           px-3 sm:px-4
           py-5 sm:py-6
           flex flex-col items-center
-          gap-6 sm:gap-8
+          gap-2 sm:gap-3
           transition-all duration-300
           ${show ? "scale-100 opacity-100" : "scale-90 opacity-0"}
         `}
       >
-        {/* PRICE BADGE */}
-        <div className="w-full flex justify-center">
+
+        <div className="w-full max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw] flex justify-between items-center px-1">
           <PriceBadge image={image} isPurchased={isPurchased} />
         </div>
 
-        {/* PREVIEW IMAGE */}
-        <img
-          src={image.imageUrl || image.previewUrl}
-          alt={image.title || "Preview"}
-          className="
-            max-w-full
-            max-h-[55vh] sm:max-h-[65vh] lg:max-h-[70vh]
-            w-auto h-auto
-            object-contain
-            rounded-2xl
-            shadow-2xl
-            ring-1 ring-white/10
-          "
-        />
+        <div className='flex justify-center'>
+          <img
+            src={image.imageUrl || image.previewUrl}
+            alt={image.title || "Preview"}
+            className="
+              max-w-full
+              max-h-[55vh] sm:max-h-[65vh] lg:max-h-[70vh]
+              w-auto h-auto
+              object-contain
+              rounded-2xl
+              shadow-2xl
+              ring-1 ring-white/10
+            "
+          />
+        </div>
 
-        {/* BUY BUTTON */}
-        <div className="flex justify-center pt-2">
+        <div className="flex justify-center pt-1">
           <ImageActions
             image={image}
             user={user}

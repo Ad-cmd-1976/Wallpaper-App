@@ -6,7 +6,7 @@ const PriceBadge = ({ image, isPurchased }) => {
   if (isPurchased || (!hasDiscount && originalPrice <= 0)) return null;
 
   return (
-    <div className="absolute top-4 left-4 right-4 flex justify-between items-center gap-2">
+    <div className="w-full flex justify-between items-center gap-2">
       {hasDiscount && (
         <div className="bg-pink-600/90 text-white text-xs sm:text-sm font-semibold px-3 py-1 rounded-full shadow-md">
           FreePixz+ {image.discountPercentage}% off · ₹ {discountedPrice}
