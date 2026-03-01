@@ -12,6 +12,8 @@ export const useImageStore=create((set, get)=>({
     searchVal:'',
     buttonSearchVal:'',
     hasMore: true,
+    imageId: '',
+    setImageId: (val)=>set({ imageId: val }),
     setsearchVal:(val)=>set({ searchVal:val }),
     setbuttonSearchVal:(val)=>set({ buttonSearchVal:val }),
 
@@ -111,7 +113,7 @@ export const useImageStore=create((set, get)=>({
         }
     },
 
-    uploadImage:async (image,imageData)=>{
+    uploadImage:async (image,imageData,flag=1)=>{
         set({ isLoading:true });
         
         try {
@@ -121,6 +123,10 @@ export const useImageStore=create((set, get)=>({
             }
 
             if(imageData.isPremium){
+                if(!imageData.price){
+                    toast.error("Price required for plus image!");
+                    return false;
+                }
                 try{
                     const formData=new FormData();
                     formData.append('file', image);
@@ -131,11 +137,12 @@ export const useImageStore=create((set, get)=>({
                     formData.append('isPremium', imageData.isPremium);
                     
                     const res=await axios.post('/images/plus-upload', formData, { withCredentials:true });
-                    toast.success(res.data.message);
+                    if(flag) toast.success(res.data.message);
                     return true;
                 }
                 catch(error){
                     console.log("Error in uploading plus image", error);
+                    toast.error(error.response.data.message);
                 }
             }
             else{
@@ -164,13 +171,15 @@ export const useImageStore=create((set, get)=>({
                     }
                     catch(error){
                         console.error("Aws upload failed:", error);
+                        toast.error(error.response.data.message);
                     }
                     const res=await axios.post('/images/upload', updatedData, { withCredentials:true });
-                    toast.success(res.data.message);
+                    if(flag) toast.success(res.data.message);
                     return true;
                 }
                 catch(error){
                     console.log("Error in uploadImage function from useImageStore", error);
+                    toast.error(error.response.data.message);
                     return false;
                 }
             }
@@ -185,11 +194,12 @@ export const useImageStore=create((set, get)=>({
         }
     },
     
-    deleteImage: async (id)=>{
+    deleteImage: async (id, flag=1)=>{
         set({ isLoading: true });
         try{
             const res=await axios.delete(`/images/delete-image/${id}`);
-            toast.success(res.data.message);
+            get().getImages();
+            if(flag) toast.success(res.data.message);
         }
         catch(error){
             console.log("Error in uploadImage function of useImageStore", error);
@@ -200,12 +210,37 @@ export const useImageStore=create((set, get)=>({
         }
     },
 
-    editImage: async (imageId)=>{
+    getImageData: async ()=>{
         try{
-
+            const imageId=get().imageId;
+            const imageData=await axios.get(`/images/getImageData/${imageId}`);
+            return imageData.data;
         }
         catch(error){
-
+            console.log("Error in getImageData function of useImageStore", error);
+            toast.error(error.response.data.error || "Failed to Delete Image");
+        }
+    },
+    
+    editImage: async (selectedFile, imageData)=>{
+        set({ isLoading: true });
+        try{
+            const flag=0;
+            console.log(imageData);
+            const uploadSuccess=await get().uploadImage(selectedFile, imageData, flag);
+            console.log(uploadSuccess);
+            if(uploadSuccess){
+                await get().deleteImage(get().imageId, flag);
+                toast.success("Edit Image Success");
+            } 
+            return uploadSuccess;
+        }
+        catch(error){
+            console.log("Error in getImageData function of useImageStore", error);
+            toast.error(error.response.data.error || "Failed to Delete Image");
+        }
+        finally{
+            set({ isLoading: false, imageId: '' });
         }
     }
 }))

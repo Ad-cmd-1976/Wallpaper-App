@@ -63,6 +63,24 @@ export const searchImages=async (req,res)=>{
     }
 }
 
+export const getImageData=async (req,res)=>{
+    try{
+        const { id }=req.params;
+        const imageData=await ImageModel.findById(id);
+        res.status(200).json({
+            title: imageData.title,
+            price: imageData.price,
+            tags: imageData.tags,
+            discountPercentage: imageData.discountPercentage,
+            isPremium: imageData.isPremium
+        });
+    }
+    catch(error){
+        res.status(500).json({ message: "Internal Server Error!" });
+        console.log("Error in getImageData function of image controller", error.message);
+    }
+}
+
 export const getPurchasedList=async (req,res)=>{
     try{
         const userId=req.user._id;
@@ -159,7 +177,6 @@ export const uploadImageData=async (req,res)=>{
 export const uploadPlusImageData=async (req,res)=>{
     try{
         const { title, tags, price, discountPercentage, isPremium }=req.body;
-
         const timestamp=Date.now();
         const originalKey=`wallpaper/premium/${timestamp}-${req.file.originalname}`;
         const previewKey=`wallpaper/premium/preview/${timestamp}-${req.file.originalname}`;
@@ -175,36 +192,53 @@ export const uploadPlusImageData=async (req,res)=>{
         const resizedBuffer=await sharp(req.file.buffer).resize(1280, null, { withoutEnlargement: true }).jpeg({ quality: 30 }).toBuffer();
         const { width, height }=await sharp(resizedBuffer).metadata();
         
-        const WATERMARK="FREEPIXZ+";
-        const fontSize=Math.round(Math.max(width,height)*0.03);
-        const tileW=Math.round(fontSize*9);
-        const tileH=Math.round(fontSize*6);
-        const opacity=0.15;
+        const watermarkPath = "./watermark.png";
+        const baseSize=Math.min(width, height);
 
+        const baseWatermark = await sharp(watermarkPath)
+            .resize(Math.round(baseSize * 0.16))
+            .rotate(-45, { background: { r: 0, g: 0, b: 0, alpha: 0 } })
+            .ensureAlpha()
+            .modulate({
+                brightness: 0.9, 
+                opacity: 0.08      
+            })
+            .blur(0.3)            
+            .toBuffer();
 
-        const svg = `
-            <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <pattern id="wm" patternUnits="userSpaceOnUse" width="${tileW}" height="${tileH}">
-                <text
-                    x="${tileW/2}" y="${tileH/2}"
-                    text-anchor="middle" dominant-baseline="middle"
-                    font-family="Arial, Helvetica, sans-serif"
-                    font-size="${fontSize}"
-                    fill="#ffffff" fill-opacity="${opacity}">
-                    ${WATERMARK}
-                </text>
-                </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#wm)"/>
-            </svg>`;
-        const previewBuffer=await sharp(resizedBuffer).composite([
-            {
-                input: Buffer.from(svg),
-                top: 0,
-                left: 0
+        const wmMeta = await sharp(baseWatermark).metadata();
+        const wmWidth = wmMeta.width;
+        const wmHeight = wmMeta.height;
+
+        const composites = [];
+
+        const spacing = Math.round(wmWidth * 1.6);
+
+        const lineSpacing = spacing;
+
+        const shiftRight = Math.round(wmWidth * 0.7);
+        const shiftUp = Math.round(wmHeight * 0.5);
+
+        for (let startY = -height*2; startY < height * 3; startY += lineSpacing) {
+
+            let x = -wmWidth + shiftRight;
+            let y = startY - shiftUp;
+
+            while (x < width + wmWidth && y < height + wmHeight) {
+                composites.push({
+                    input: baseWatermark,
+                    top: Math.round(y),
+                    left: Math.round(x)
+                });
+
+                x += spacing;
+                y += spacing;
             }
-        ]).toBuffer();
+        }
+        const previewBuffer = await sharp(resizedBuffer)
+            .composite(composites)
+            .jpeg({ quality: 80 })
+            .toBuffer();
 
         const previewParams={
             Bucket: process.env.AWS_BUCKET_NAME,

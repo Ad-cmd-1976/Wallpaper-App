@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Download, ShoppingCart, Lock, Trash2 } from 'lucide-react';
+import { Download, Lock } from 'lucide-react';
 import AdminActions from './AdminActions';
 
 const ProgressiveImageCard = ({
@@ -23,23 +23,17 @@ const ProgressiveImageCard = ({
     };
   }, [image.previewUrl]);
 
-  const aspectClass = isLandscape ? 'aspect-[16/9]' : 'aspect-[9/16]';
   const isPurchased = purchaseIds.includes(image._id);
-
-  const hasDiscount = image.discountPercentage > 0;
-  const discountedPrice = hasDiscount
-    ? Math.round(image.price - (image.price * image.discountPercentage) / 100)
-    : null;
 
   return (
     <div
-      className={`relative group overflow-hidden rounded-xl shadow-lg border border-gray-800 bg-black/10 backdrop-blur-sm ${aspectClass}`}
+      className="relative group overflow-hidden rounded-xl shadow-lg border border-gray-800 bg-black/10 backdrop-blur-sm"
     >
       <img
         src={src}
         alt={image.title || 'Image'}
         onClick={onPreview}
-        className={`w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 ring-1 ring-white/10 ${
+        className={`w-full h-auto object-cover transition-transform duration-500 ease-out group-hover:scale-105 ring-1 ring-white/10 ${
           !isLoaded ? 'blur-lg' : 'blur-0'
         }`}
       />

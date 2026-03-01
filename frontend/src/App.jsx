@@ -6,7 +6,8 @@ import Navbar from './components/Navbar'
 import HomePage from './pages/HomePage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import SignupPage from './pages/SignupPage.jsx'
-import AdminPage from './pages/AdminPage.jsx';
+import AdminUploadPage from './pages/AdminUploadPage.jsx';
+import AdminEditPage from './pages/AdminEditPage.jsx';
 import AuthSuccessPage from './pages/AuthSuccessPage.jsx';
 import ResetPassPage from './pages/ResetPassPage.jsx';
 import DownloadOverlay from './components/DownloadOverlay.jsx';
@@ -35,7 +36,8 @@ function App() {
           <Route path='/' element={<HomePage/>}></Route>
           <Route path='/login' element={!user?<LoginPage/>:<Navigate to='/' />}></Route>
           <Route path='/signup' element={!user?<SignupPage/>:<Navigate to='/' />}></Route>
-          <Route path='/admin-dashboard' element={user?.role==="admin" ? <AdminPage/> : <Navigate to='/'/>}></Route>
+          <Route path='/admin-edit' element={user?.role==="admin" ? <AdminEditPage/> : <Navigate to='/' />}></Route>
+          <Route path='/admin-upload' element={user?.role==="admin" ? <AdminUploadPage/> : <Navigate to='/'/>}></Route>
           <Route path='/auth/success' element={<AuthSuccessPage/>}></Route>
           <Route path='/reset-password/:token' element={<ResetPassPage/>}/>
         </Routes>

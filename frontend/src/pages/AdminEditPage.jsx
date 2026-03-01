@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useImageStore } from '../store/useImageStore';
 import { motion } from 'framer-motion';
 import { useThemeStore } from '../store/useThemeStore';
 import { FileText, DollarSign, Loader, Percent } from 'lucide-react';
 
-const AdminPage = () => {
-    const { uploadImage, isLoading }=useImageStore();
+const AdminEditPage=()=>{
+    const { editImage, isLoading, getImageData }=useImageStore();
     const { theme }=useThemeStore();
     const [selectedFile, setselectedFile]=useState(null);
     const [imageData, setimageData] = useState({
@@ -18,10 +18,51 @@ const AdminPage = () => {
       discountPercentage: 0,
       isPremium: false,
     });
+
+    const tagsRef=useRef(null);
+    const autoResizeTags=()=>{
+      const el=tagsRef.current;
+      if(!el) return;
+      el.style.height="auto";
+
+      requestAnimationFrame(()=>{
+        el.style.height=el.scrollHeight+"px";
+      })
+    }
+    useEffect(()=>{
+      autoResizeTags();
+    }, [imageData.tags]);
+    
+    const titleRef=useRef();
+    const autoResizeTitle=()=>{
+      const el=titleRef.current;
+      if(!el) return;
+      el.style.height="auto";
+
+      requestAnimationFrame(()=>{
+        el.style.height=el.scrollHeight+"px";
+      })
+    }
+    useEffect(()=>{
+      autoResizeTitle();
+    },[imageData.title]);
+
+
+    useEffect(()=>{
+        handleGetInfo();
+    },[]);
+    
+    const handleGetInfo=async ()=>{
+        const imageData=await getImageData();
+        setimageData({ title: imageData.title, price: imageData.price, tags: imageData.tags[0], discountPercentage: imageData.discountPercentage, isPremium: imageData.isPremium });
+    }
+    useEffect(()=>{
+      console.log(imageData);
+    }, [imageData]);
   
     const handleUpload = async (e) => {
       e.preventDefault();
-      const success=await uploadImage(selectedFile,imageData);
+      const success=await editImage(selectedFile,imageData);
       if(success){
         setimageData({ title:'', price:0, tags:'', discountPercentage:0, isPremium:false, imageUrl:'', publicId:'', previewUrl:'' });
         setselectedFile(null);
@@ -39,7 +80,7 @@ const AdminPage = () => {
       animate={{opacity:1,y:0}}
       transition={{duration:0.5,delay:0.25}}
       className='text-xl font-bold'
-      >Admin Dashboard</motion.p>
+      >Admin Edit</motion.p>
 
       <motion.form 
       initial={{opacity:0,y:20}}
@@ -53,13 +94,20 @@ const AdminPage = () => {
           <label htmlFor="image-title" className='pl-2 text-md'>Image Title</label>
           <div className='relative'>
             <FileText className='size-6 absolute top-1 left-2 pointer-events-none text-gray-400'/>
-            <input 
-            onChange={(e)=>setimageData({...imageData,title:e.target.value})}
-            type="text" 
-            name="title" 
-            id="title" 
-            value={imageData.title}
-            className={`border-2 w-full p-1 pl-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 ${theme?"text-gray-400":"text-black"}`}
+            <textarea
+              ref={titleRef}
+              onChange={(e) => setimageData({ ...imageData, title: e.target.value })}
+              onInput={autoResizeTitle}
+              name="title"
+              id="title"
+              value={imageData.title}
+              rows={1}
+              className={`border-2 w-full 
+                          pt-1 pb-1 pl-10 pr-2
+                          rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400
+                          resize-none overflow-hidden
+                          transition-[height] duration-300 ease-in-out
+                          ${theme ? "text-gray-400" : "text-black"}`}
             />
           </div>
         </div>
@@ -68,14 +116,21 @@ const AdminPage = () => {
           <label htmlFor="tags" className='pl-2 text-md'>Tags (comma separated)</label>
           <div className='relative'>
             <FileText className='size-6 absolute top-1 left-2 pointer-events-none text-gray-400' />
-            <input
+            <textarea
+              ref={tagsRef}
               onChange={(e) => setimageData({ ...imageData, tags: e.target.value })}
-              type="text"
+              onInput={autoResizeTags}
               name="tags"
               id="tags"
               value={imageData.tags}
+              rows={1}
               placeholder="Nature, Dark, Abstract"
-              className={`border-2 w-full p-1 pl-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 ${theme ? "text-gray-400" : "text-black"}`}
+              className={`border-2 w-full 
+                          pt-1 pb-1 pl-10 pr-2
+                          rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400
+                          resize-none overflow-hidden
+                          transition-[height] duration-300 ease-in-out
+                          ${theme ? "text-gray-400" : "text-black"}`}
             />
           </div>
         </div>
@@ -90,7 +145,7 @@ const AdminPage = () => {
             name="price" 
             id="price" 
             value={imageData.price}
-            className={`border-2 w-full p-1 pl-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 ${theme?"text-gray-400":"text-black"}`}
+            className={`border-2 w-full p-1 pl-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 ${theme?"text-gray-400":"text-black"}`}
             />
           </div>
         </div>
@@ -116,14 +171,14 @@ const AdminPage = () => {
               name="discountPercentage"
               id="discountPercentage"
               value={imageData.discountPercentage}
-              className={`border-2 w-full p-1 pl-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 ${theme ? "text-gray-400" : "text-black"}`}
+              className={`border-2 w-full p-1 pl-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 ${theme ? "text-gray-400" : "text-black"}`}
             />
           </div>
         </div>
 
         <div className="w-80 sm:w-96">
           <label htmlFor="file" className="pl-2 text-md">Upload File</label>
-          <div className="relative flex items-center justify-center border-2 border-dashed rounded-lg p-3 transition-all hover:border-blue-500 hover:shadow-md">
+          <div className="relative flex items-center justify-center border-2 border-dashed rounded-xl p-3 transition-all hover:border-blue-500 hover:shadow-md">
             <input
               type="file"
               accept="image/*"
@@ -154,7 +209,7 @@ const AdminPage = () => {
                 Loading...
               </>
               :
-              <span>Upload</span>
+              <span>Edit</span>
             }
           </button>
         </div>
@@ -162,8 +217,7 @@ const AdminPage = () => {
     </div>
   </div>
 </div>
-
   )
 }
 
-export default AdminPage
+export default AdminEditPage;

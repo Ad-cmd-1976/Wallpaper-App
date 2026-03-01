@@ -1,13 +1,14 @@
+import { Link } from 'react-router-dom';
 import { Edit3, Trash2 } from 'lucide-react';
 import { useImageStore } from '../store/useImageStore';
 
 const AdminActions = ({ image }) => {
-    const { deleteImage, editImage }=useImageStore();
+    const { deleteImage, setImageId }=useImageStore();
   return (
     <div className="flex items-center gap-2">
-      {/* EDIT */}
-      <button
-        onClick={()=>editImage(image._id)}
+      <Link
+        to='/admin-edit'
+        onClick={()=>setImageId(image._id)}
         className="
           w-9 h-9 flex items-center justify-center
           bg-blue-500/20 hover:bg-blue-500/30
@@ -17,9 +18,8 @@ const AdminActions = ({ image }) => {
         "
       >
         <Edit3 className="w-4 h-4" />
-      </button>
+      </Link>
 
-      {/* DELETE */}
       <button
         onClick={()=>deleteImage(image._id)}
         className="

@@ -103,7 +103,7 @@ const Navbar = () => {
 
           {user?.role === "admin" && (
             <Link
-              to="/admin-dashboard"
+              to="/admin-upload"
               className={`bg-blue-700 px-2 rounded-xl py-1 hover:bg-blue-600 flex justify-center items-center gap-1 ${authTextColor}`}
             >
               <Lock className="size-4 sm:size-5" />

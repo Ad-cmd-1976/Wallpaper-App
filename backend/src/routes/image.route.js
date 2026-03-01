@@ -1,10 +1,11 @@
 import express from 'express';
-import { downloadImage, getImages, searchImages, uploadImageData, uploadPlusImageData, getPurchasedList, getPresignedUrl, deleteImage } from '../controllers/image.controller.js';
+import { downloadImage, getImages, searchImages, uploadImageData, uploadPlusImageData, getPurchasedList, getPresignedUrl, deleteImage, getImageData } from '../controllers/image.controller.js';
 import { protectedRoute, adminRoute, uploadMemory } from '../middleware/protected.middleware.js';
 
 const router=express.Router();
 
 router.get('/getImages', getImages);
+router.get('/getImageData/:id', protectedRoute, adminRoute, getImageData);
 router.get('/search', searchImages);
 router.get('/download', downloadImage);
 router.get('/list', protectedRoute, getPurchasedList);
