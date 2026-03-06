@@ -52,7 +52,7 @@ const Navbar = () => {
             to="/"
             className="text-xl sm:text-2xl lg:text-3xl flex items-center font-bold text-blue-700"
           >
-            Freepixz
+            Pikhunt
           </Link>
         </div>
 
@@ -64,7 +64,7 @@ const Navbar = () => {
                 theme ? "decoration-gray-400" : "decoration-white"
               } font-bold bg-gradient-to-r from-pink-500 via-yellow-500 to-cyan-500 bg-[length:200%_auto] animate-gradient bg-clip-text text-transparent text-md lg:text-lg`}
             >
-              Get FreePixz+
+              Get Pikhunt+
             </button>
           </div>
 

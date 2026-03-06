@@ -51,7 +51,7 @@ const Lowerbar = () => {
           <div onClick={buyPlus} 
           className={`${theme ? 'decoration-gray-400' : 'decoration-white'} cursor-pointer font-bold bg-gradient-to-r from-pink-500 via-yellow-500 to-cyan-500 bg-[length:200%_auto] animate-gradient bg-clip-text text-transparent text-md lg:text-lg`}
           >
-          Freepixz+
+          Pikhunt+
           </div>
           <div 
           className={`hover:underline-offset-8 hover:underline ${theme ? 'decoration-gray-400' : 'decoration-white'} cursor-pointer select-none`}

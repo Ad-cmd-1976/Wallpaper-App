@@ -216,9 +216,16 @@ export const uploadPlusImageData=async (req,res)=>{
 
         const lineSpacing = spacing;
 
-        const shiftRight = Math.round(wmWidth * 0.7);
-        const shiftUp = Math.round(wmHeight * 0.5);
-
+        let shiftRight;
+        let shiftUp;
+        if(!(height>width)){
+            shiftRight = Math.round(wmWidth * 0.7);
+            shiftUp = Math.round(wmHeight * 0.5);
+        }
+        else{
+            shiftRight = Math.round(wmWidth * 0.45);
+            shiftUp = Math.round(wmHeight * 0.25);
+        }
         for (let startY = -height*2; startY < height * 3; startY += lineSpacing) {
 
             let x = -wmWidth + shiftRight;
