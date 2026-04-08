@@ -28,7 +28,7 @@ export const usePurchaseStore=create((set, get)=>({
                 amount: data.amount,
                 currency: data.currency,
                 key: data.key,
-                name: "Freepixz+",
+                name: "Pikhunt+",
                 description: "Unlock Premium Features",
                 order_id: data.orderId,
                 handler: async(response) => { await get().verifyPlusUser(response) },
@@ -89,7 +89,7 @@ export const usePurchaseStore=create((set, get)=>({
                 key: data.key,
                 amount: data.amount,
                 currency: data.currency,
-                name: "Wallpaper Store",
+                name: "Pikhunt",
                 description: "Purchase Premium Wallpaper",
                 order_id: data.orderId,
                 method:{
