@@ -193,45 +193,40 @@ export const uploadPlusImageData=async (req,res)=>{
         const { width, height }=await sharp(resizedBuffer).metadata();
         
         const watermarkPath = "./watermark.png";
-        const baseSize=Math.min(width, height);
+
+        const baseSize = width;
+        const wmSize = Math.round(baseSize * 0.14);
 
         const baseWatermark = await sharp(watermarkPath)
-            .resize(Math.round(baseSize * 0.16))
+            .resize(wmSize)
             .rotate(-45, { background: { r: 0, g: 0, b: 0, alpha: 0 } })
             .ensureAlpha()
             .modulate({
-                brightness: 0.9, 
-                opacity: 0.08      
+                brightness: 0.9,
+                opacity: 0.08
             })
-            .blur(0.3)            
+            .blur(0.3)
             .toBuffer();
 
         const wmMeta = await sharp(baseWatermark).metadata();
         const wmWidth = wmMeta.width;
-        const wmHeight = wmMeta.height;
+
 
         const composites = [];
 
-        const spacing = Math.round(wmWidth * 1.6);
+        const spacing = Math.round(wmWidth * 1.7);
+            
+        const diagonalCount = Math.ceil((width + height) / spacing);
 
-        const lineSpacing = spacing;
+        for (let i = -diagonalCount; i < diagonalCount; i++) {
+            let x = i * spacing;
+            let y = 0;
+            if (x < 0) {
+                y = -x;
+                x = 0;
+            }
 
-        let shiftRight;
-        let shiftUp;
-        if(!(height>width)){
-            shiftRight = Math.round(wmWidth * 0.7);
-            shiftUp = Math.round(wmHeight * 0.5);
-        }
-        else{
-            shiftRight = Math.round(wmWidth * 0.45);
-            shiftUp = Math.round(wmHeight * 0.25);
-        }
-        for (let startY = -height*2; startY < height * 3; startY += lineSpacing) {
-
-            let x = -wmWidth + shiftRight;
-            let y = startY - shiftUp;
-
-            while (x < width + wmWidth && y < height + wmHeight) {
+            while (x < width && y < height) {
                 composites.push({
                     input: baseWatermark,
                     top: Math.round(y),
